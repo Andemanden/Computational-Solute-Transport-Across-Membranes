@@ -1,0 +1,26 @@
+clc,clear 
+value=0;
+%MainStoftransportsimulering
+
+
+
+
+
+Stoftransportsimuleringsapp
+
+
+classdef triangleArea
+   properties
+      Base = 1
+      Height = 1
+   end
+   properties (Dependent)
+      Area
+   end
+   methods
+      function a = get.Area(obj)
+         disp("Executing get.Area method.")
+         a = 0.5*obj.Base*obj.Height;
+      end
+   end
+end
