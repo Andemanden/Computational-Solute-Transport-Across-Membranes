@@ -1,8 +1,10 @@
+%% Clearing
 clear %Clear all global variables
-close all
+close all 
 clc %Clear command window
 tic %Clear elapsed time counter
 
+%% Decleration of startvariables
 N = 5; % Number of Control Volumes
 L = 0.02; %[m] % Domain length
 h = L/(N); % Grid Spacing (Wall thickness)
@@ -18,12 +20,12 @@ dt = 2; % Discrete Time Steps
 T_a = 0;    %[\circ c] % Left Surface Temperature
 T_b = 0;    %[\circ c] % Right Surface Temperature
 lambda = (alpha.*dt)/(h^2);  % Parameteric Setup
-%% Initializing Variable
+% Initializing Variable
 T_Old = zeros(N,1); % Unknowns at time level n
 T_New = zeros(N,1); % Unknowns at time level n+1
 T_Old(:) = 200; % Initial Value (Initial Condition)
 
-
+%% Other
 
 value=0;
 
