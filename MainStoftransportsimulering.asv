@@ -1,26 +1,57 @@
-clc,clear 
+clear all
+close all
+clc
+tic
+
+% Number of Control Volumes
+N = 5;
+% Domain length
+L = 0.02; %[m]
+% Grid Spacing (Wall thickness)
+h = L/(N); 
+% Diffusivity (Thermal conductivity)
+k = 10;  %[W/m-K]
+% Specific Heat Capacity
+Row_c = 10e6;  %[J/m^(3)-K]
+% Uniform Heat Generation, A Source Term
+q = 1000e3;     %  [W/m^(3)]
+% The center of the first cell is at dx/2 & the last cell is at L-dx/2.
+x = h/2 : h : L-(h/2);
+% Cross sectional area of the 1D domain
+A = 1;          %[m^2] 
+% Diffusivity (Heat)
+alpha = k/Row_c;
+% Simulation Time
+t_Final = 8;
+% Discrete Time Steps
+dt = 2;
+% Left Surface Temperature
+T_a = 0;    %[\circ c]
+% Right Surface Temperature
+T_b = 0;    %[\circ c]
+% Parameteric Setup
+lambda = (alpha.*dt)/(h^2);
+%% Initializing Variable
+T_Old = zeros(N,1); % Unknowns at time level n
+% Unknowns at time level n+1
+T_New = zeros(N,1);
+% Initial Value (Initial Condition)
+T_Old(:) = 200;
+% Fully Implicit Scheme to Solve 1D Unsteady Diffusion.
+% Time loop
+
+
+
 value=0;
+
 %MainStoftransportsimulering
 
 
 
 
-
 Stoftransportsimuleringsapp
+obj = Kontrolvol;
+obj = obj.MyClass(1);
 
 
-classdef triangleArea
-   properties
-      Base = 1
-      Height = 1
-   end
-   properties (Dependent)
-      Area
-   end
-   methods
-      function a = get.Area(obj)
-         disp("Executing get.Area method.")
-         a = 0.5*obj.Base*obj.Height;
-      end
-   end
-end
+
