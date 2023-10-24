@@ -1,7 +1,7 @@
-clear all
+clear %Clear all global variables
 close all
-clc
-tic
+clc %Clear command window
+tic %Clear elapsed time counter
 
 N = 5; % Number of Control Volumes
 L = 0.02; %[m] % Domain length
