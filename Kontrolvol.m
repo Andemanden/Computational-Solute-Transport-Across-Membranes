@@ -1,6 +1,6 @@
 classdef Kontrolvol
    properties
-      Prop
+      Prop=0;
    end
    methods
       function obj = MyClass(val)
