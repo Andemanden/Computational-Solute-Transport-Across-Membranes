@@ -25,7 +25,7 @@ T_Old = zeros(N,1); % Unknowns at time level n
 T_New = zeros(N,1); % Unknowns at time level n+1
 T_Old(:) = 200; % Initial Value (Initial Condition)
 
-%% Other
+%% Main
 
 value=0;
 
@@ -33,8 +33,18 @@ value=0;
 
 Arr=[]; %Main array
 
+%Main Forloop of array
+for i=1:2 %For looping through x-dimension
+    for j=1:2 %For looping through t-dimension
+    
+    end
+end
 
-Stoftransportsimuleringsapp
+
+
+Stoftransportsimuleringsapp %%The main script for GUI.mlapp
+
+%% Object decleration
 obj = Kontrolvol;
 obj = obj.MyClass(1);
 

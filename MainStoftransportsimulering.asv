@@ -31,7 +31,14 @@ value=0;
 
 %MainStoftransportsimulering
 
-Arr=[]; %ma
+Arr=[]; %Main array
+
+%Main Forloop of array
+for i=1:2
+    for 
+     
+end
+
 
 
 Stoftransportsimuleringsapp

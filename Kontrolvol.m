@@ -1,4 +1,4 @@
-classdef Kontrolvol
+classdef Kontrolvol %Controlvolume class for intuity and e
    properties
       Prop=0;
    end
