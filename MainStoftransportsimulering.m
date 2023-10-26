@@ -42,6 +42,7 @@ for i=1:length(Arr) %For looping through x-dimension
     end
 end
 
+%dd 
 
 
 Stoftransportsimuleringsapp %%The main script for GUI.mlapp
