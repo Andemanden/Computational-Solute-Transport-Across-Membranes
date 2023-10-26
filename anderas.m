@@ -5,15 +5,15 @@ tic
  
 %hej
 % Define parameters
-domain_length = 0.01;       % Domain length (meters)
-discretization = 500;       % Number of spatial discretization points
+domain_length = 0.5;       % Domain length (meters)
+discretization = 50;       % Number of spatial discretization points
 dx = domain_length / (discretization - 1);
 
-time_length = 1.0;         % Time length (seconds)
-time_steps = 1000;          % Number of time steps
+time_length = 0.5;         % Time length (seconds)
+time_steps = 500;          % Number of time steps
 dt = time_length / time_steps;
 
-D = 0.00001;                   % Diffusion coefficient
+D = 0.01;                   % Diffusion coefficient
 
 % Create a grid for space and time
 x = linspace(0, domain_length, discretization);
