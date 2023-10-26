@@ -2,7 +2,8 @@ clear all
 close all
 clc
 tic
-
+ 
+%hej
 % Define parameters
 domain_length = 0.01;       % Domain length (meters)
 discretization = 500;       % Number of spatial discretization points
