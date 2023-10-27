@@ -27,7 +27,7 @@ t = linspace(0, time_length, time_steps);
 % Initialize the concentration array (1D)
 C = ones(domain_steps, time_steps);
 % Initial condition (as a column vector)
-C(domain_steps/2,1)=2;
+%C(domain_steps/2,1)=2;
 rho = velocity*dx/dt;
 r = D*dx/dt;
 fprintf(' r = %f \n rho = %f ', r, rho);
