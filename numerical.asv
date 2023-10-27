@@ -12,9 +12,7 @@ time_steps = 500;       % Number of time steps
 dt = time_length / time_steps;
 
 D = 0.01;               % Diffusion coefficient
-%velocity = 0.3;         % Constant velocity (m/s)
-% velocity = Lp(TMP-OP);         % Constant velocity (m/s)
-
+velocity = 0.3;         % Constant velocity (m/s)
 feed_conc = 2; % Constant solute concentration at the first cell
 rejection_rate = 0.1; % No rejection
 
@@ -48,15 +46,15 @@ for j = 2:time_steps
             % No left neighbor at the first cell
             d2Cdx2 = D * (C(2, j-1) -  C(1, j-1)) / dx^2;
              % Apply advection and inflow at the first cell
-            dCdt_advection = -velocity(j, I,  R, T, C, Lp, TMP) * C(i, j-1) / dx;
+            dCdt_advection = -velocity * C(i, j-1) / dx;
         elseif i == domain_steps
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate)*velocity(j, I, domain_steps, R, T, C, Lp, TMP)/(dx);
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate)*velocity/(dx);
         else
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
             % Apply advection term
-            dCdt_advection = -velocity(j, I, R, T, C, Lp, TMP) * (C(i, j-1) - C(i-1, j-1)) / dx;
+            dCdt_advection = -velocity * (C(i, j-1) - C(i-1, j-1)) / dx;
         end
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
