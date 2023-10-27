@@ -12,13 +12,19 @@ time_steps = 500;       % Number of time steps
 dt = time_length / time_steps;
 
 D = 0.01;               % Diffusion coefficient
-velocity = 0.3;         % Constant velocity (m/s)
+%velocity = 0.3;         % Constant velocity (m/s)
+% velocity = Lp(TMP-OP);         % Constant velocity (m/s)
+
 feed_conc = 2; % Constant solute concentration at the first cell
-rejection_rate = 0.5; % No rejection
+rejection_rate = 0.1; % No rejection
 
 %Constants
-R=8.31415; % Gasconstant []
-T=273.15+20; %Temperature [K]
+R = 8.31415; % Gasconstant []
+T = 273.15+20; %Temperature [K]
+TMP = 10; %Bar
+I = 1;
+Lp = 1; %Solvent premeblity across membrane
+
 
 % Create a grid for space and time
 x = linspace(0, domain_length, domain_steps);
@@ -28,9 +34,10 @@ t = linspace(0, time_length, time_steps);
 C = ones(domain_steps, time_steps);
 % Initial condition (as a column vector)
 
-rho = velocity*dx/dt;
+%rho = velocity(j, I, R, T, C, Lp, TMP)*dx/dt;
 r = D*dx/dt;
-fprintf(' r = %f \n rho = %f ', r, rho);
+
+%fprintf(' r = %f \n rho = %f ', r, rho);
 
 % Time-stepping loop
 for j = 2:time_steps
@@ -41,21 +48,20 @@ for j = 2:time_steps
             % No left neighbor at the first cell
             d2Cdx2 = D * (C(2, j-1) -  C(1, j-1)) / dx^2;
              % Apply advection and inflow at the first cell
-            dCdt_advection = -velocity * C(i, j-1) / dx;
+            dCdt_advection = -velocity(j, I, R, T, C, Lp, TMP) * C(i, j-1) / dx;
         elseif i == domain_steps
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate)*velocity/(dx);
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C( j-1)) / dx^2) + C(i,j-1)*(rejection_rate)*velocity(j, I, R, T, C, Lp, TMP)/(dx);
         else
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
             % Apply advection term
-            dCdt_advection = -velocity * (C(i, j-1) - C(i-1, j-1)) / dx;
+            dCdt_advection = -velocity(j, I, R, T, C, Lp, TMP) * (C(i, j-1) - C(i-1, j-1)) / dx;
         end
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
     end
 end
-
 
 % Define fractions of time steps you want to visualize
 time_fraction = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];  % For example, 0.1 corresponds to 10% of time steps
@@ -99,3 +105,10 @@ zlim([0, max(C(:))]); % Assuming max(C(:)) is the maximum concentration in your 
 
 
 set(h,'LineStyle','none')
+
+
+function v_out = velocity(j, I, R, T, C, Lp, TMP)
+
+v_out = Lp(TMP - (I * R * T * C(5,j - 1) - C(5 - 1, j-1)));
+
+end
