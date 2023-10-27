@@ -34,25 +34,29 @@ C(1, 1) = inflow_concentration; % Set the inflow concentration at the first posi
 for k = 2:time_steps
     for i = 1:discretization
         % Calculate the second derivative in x direction
-        d2Cdx2 = D * (C(min(i + 1, discretization), k-1) - 2 * C(i, k-1) + C(max(i - 1, 1), k-1)) / dx^2;
-        
-        % Calculate convection term
         if i == 1
-            % Apply advection and inflow at the first cell
+            % No left neighbor at the first cell
+            d2Cdx2 = D * (C(2, k-1) -  C(1, k-1)) / dx^2;
+             % Apply advection and inflow at the first cell
             dCdt_convection = -velocity * C(i, k-1) / dx;
             C(1, k) = inflow_concentration; % Fill the first cell with inflow concentration
+        elseif i == discretization
+            % No right neighbor at the last cell
+            d2Cdx2 = D * (C(discretization - 1, k-1) - C(discretization, k-1)) / dx^2;
         else
+            % Calculate the second derivative normally
+            d2Cdx2 = D * (C(i + 1, k-1) - 2 * C(i, k-1) + C(i - 1, k-1)) / dx^2;
             % Apply advection term
             dCdt_convection = -velocity * (C(i, k-1) - C(i-1, k-1)) / dx;
         end
-
         % Apply the diffusion-convection equation
         C(i, k) = C(i, k-1) + dt * (d2Cdx2 - rejection_rate * C(i, k-1) + dCdt_convection);
     end
 end
 
+
 % Define fractions of time steps you want to visualize
-time_fraction = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5];  % For example, 0.1 corresponds to 10% of time steps
+time_fraction = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];  % For example, 0.1 corresponds to 10% of time steps
 
 % Calculate the corresponding time indices
 time_instances = round(time_fraction * time_steps);
