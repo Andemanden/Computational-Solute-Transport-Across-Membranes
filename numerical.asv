@@ -43,11 +43,8 @@ for k = 2:time_steps
     end
 end
 
-% Define fractions of time steps you want to visualize
-time_fraction = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5];  % For example, 0.1 corresponds to 10% of time steps
-
-% Calculate the corresponding time indices
-time_instances = round(time_fraction * time_steps);
+% Define the time instances you want to visualize
+time_instances = [1, discretization/100, discretization/80, discretization/70, discretization/60, discretization/50, discretization/50, ;
 
 % Create a figure for the first plot
 figure;
@@ -64,7 +61,7 @@ ylabel('Concentration');
 title('Concentration Over Time at Different Instances');
 
 % Add a legend for clarity
-legend(arrayfun(@(f) ['t=', num2str(f)], time_fraction, 'UniformOutput', false));
+legend('t=50', 't=100', 't=150', 't=200', 't=250');
 
 grid on;
 hold off;
