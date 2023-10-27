@@ -26,7 +26,7 @@ C = ones(discretization, time_steps);
 
 % Initial condition (as a column vector)
 C(:, 1) = ones(discretization, 1); % Initialize to 0 everywhere
-
+C(1,) = inflow_concentration
 % Time-stepping loop
 for k = 2:time_steps
     for i = 1:discretization

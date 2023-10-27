@@ -7,14 +7,14 @@ domain_length = 0.5;   % Domain length (meters)
 discretization = 50;    % Number of spatial discretization points
 dx = domain_length / (discretization - 1);
 
-time_length = 5;      % Time length (seconds)
-time_steps = 5000;       % Number of time steps
+time_length = 0.5;      % Time length (seconds)
+time_steps = 500;       % Number of time steps
 dt = time_length / time_steps;
 
 D = 0.001;               % Diffusion coefficient
 velocity = 0.1;         % Constant velocity (m/s)
-inflow_concentration = 1; % Constant solute concentration at the first cell
-rejection_rate = 0.1; % No rejection
+inflow_concentration = 0.5; % Constant solute concentration at the first cell
+rejection_rate = 0; % No rejection
 ion_flux = velocity*(1-rejection_rate);
 
 % Create a grid for space and time
@@ -23,23 +23,22 @@ t = linspace(0, time_length, time_steps);
 
 % Initialize the concentration array (1D)
 C = ones(discretization, time_steps);
-
 % Initial condition (as a column vector)
-C(:, 1) = ones(discretization, 1); % Initialize to 0 everywhere
+C(discretization/2,1) = 2;
 
 % Time-stepping loop
 for k = 2:time_steps
     for i = 1:discretization
         % Calculate the second derivative in x direction
         if i == 1
+             C(1,:) = inflow_concentration; % Fill the first cell with inflow concentration
             % No left neighbor at the first cell
             d2Cdx2 = D * (C(2, k-1) -  C(1, k-1)) / dx^2;
              % Apply advection and inflow at the first cell
             dCdt_convection = -velocity * C(i, k-1) / dx;
-            C(1, k) = inflow_concentration; % Fill the first cell with inflow concentration
         elseif i == discretization
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(discretization - 1, k-1) - C(discretization, k-1)) / dx^2) + C(i,k-1)*(1-ion_flux)*(dt/dx);
+            d2Cdx2 = (D * (C(discretization - 1, k-1) - C(discretization, k-1)) / dx^2); %+ C(i,k-1)*(1-ion_flux)*(dt/dx);
         else
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, k-1) - 2 * C(i, k-1) + C(i - 1, k-1)) / dx^2;
