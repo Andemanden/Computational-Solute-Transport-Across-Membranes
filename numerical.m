@@ -4,49 +4,51 @@ clc
 
 % Define parameters
 domain_length = 0.5;   % Domain length (meters)
-discretization = 50;    % Number of spatial discretization points
-dx = domain_length / (discretization - 1);
+domain_steps = 100;    % Number of spatial domain_steps points
+dx = domain_length / (domain_steps - 1);
 
 time_length = 0.5;      % Time length (seconds)
 time_steps = 500;       % Number of time steps
 dt = time_length / time_steps;
 
-D = 0.001;               % Diffusion coefficient
-velocity = 0.1;         % Constant velocity (m/s)
-inflow_concentration = 0.5; % Constant solute concentration at the first cell
-rejection_rate = 0; % No rejection
-ion_flux = velocity*(1-rejection_rate);
+D = 0.01;               % Diffusion coefficient
+velocity = 0.3;         % Constant velocity (m/s)
+feed_conc = 2; % Constant solute concentration at the first cell
+rejection_rate = 0.5; % No rejection
 
 % Create a grid for space and time
-x = linspace(0, domain_length, discretization);
+x = linspace(0, domain_length, domain_steps);
 t = linspace(0, time_length, time_steps);
 
 % Initialize the concentration array (1D)
-C = ones(discretization, time_steps);
+C = ones(domain_steps, time_steps);
 % Initial condition (as a column vector)
-C(discretization/2,1) = 2;
+
+rho = velocity*dx/dt;
+r = D*dx/dt;
+fprintf(' r = %f \n rho = %f ', r, rho);
 
 % Time-stepping loop
-for k = 2:time_steps
-    for i = 1:discretization
+for j = 2:time_steps
+    for i = 1:domain_steps
         % Calculate the second derivative in x direction
         if i == 1
-             C(1,:) = inflow_concentration; % Fill the first cell with inflow concentration
+             C(1,:) = feed_conc; % Fill the first cell with inflow concentration
             % No left neighbor at the first cell
-            d2Cdx2 = D * (C(2, k-1) -  C(1, k-1)) / dx^2;
+            d2Cdx2 = D * (C(2, j-1) -  C(1, j-1)) / dx^2;
              % Apply advection and inflow at the first cell
-            dCdt_convection = -velocity * C(i, k-1) / dx;
-        elseif i == discretization
+            dCdt_advection = -velocity * C(i, j-1) / dx;
+        elseif i == domain_steps
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(discretization - 1, k-1) - C(discretization, k-1)) / dx^2); %+ C(i,k-1)*(1-ion_flux)*(dt/dx);
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate)*velocity/(dx);
         else
             % Calculate the second derivative normally
-            d2Cdx2 = D * (C(i + 1, k-1) - 2 * C(i, k-1) + C(i - 1, k-1)) / dx^2;
+            d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
             % Apply advection term
-            dCdt_convection = -velocity * (C(i, k-1) - C(i-1, k-1)) / dx;
+            dCdt_advection = -velocity * (C(i, j-1) - C(i-1, j-1)) / dx;
         end
-        % Apply the diffusion-convection-(electromigration) equation
-        C(i, k) = C(i, k-1) + dt * (d2Cdx2 + dCdt_convection);
+        % Apply the diffusion-advection-(electromigration) equation
+        C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
     end
 end
 
@@ -85,5 +87,11 @@ xlabel('Position (meters)');
 ylabel('Time (seconds)');
 zlabel('Concentration');
 title('Concentration Over Time and Position');
+
+% Set axis limits to start at the origin
+xlim([0, domain_length]);
+ylim([0, time_length]);
+zlim([0, max(C(:))]); % Assuming max(C(:)) is the maximum concentration in your data
+
 
 set(h,'LineStyle','none')
