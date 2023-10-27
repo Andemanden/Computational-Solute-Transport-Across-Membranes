@@ -14,9 +14,7 @@ dt = time_length / time_steps;
 D = 0.001;               % Diffusion coefficient
 velocity = 0.1;         % Constant velocity (m/s)
 inflow_concentration = 2.0; % Constant solute concentration at the first cell
-D = 0.01;               % Diffusion coefficient
-velocity = 0.6;         % Constant velocity (m/s)
-inflow_concentration = 1.0; % Constant solute concentration at the first cell
+
 
 % Create a grid for space and time
 x = linspace(0, domain_length, discretization);
