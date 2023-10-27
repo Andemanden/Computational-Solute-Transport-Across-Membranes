@@ -13,7 +13,7 @@ dt = time_length / time_steps;
 
 D = 0.001;               % Diffusion coefficient
 velocity = 0.1;         % Constant velocity (m/s)
-inflow_concentration = 0.5; % Constant solute concentration at the first cell
+inflow_concentration = 1; % Constant solute concentration at the first cell
 rejection_rate = 0; % No rejection
 ion_flux = velocity*(1-rejection_rate);
 
@@ -38,7 +38,7 @@ for k = 2:time_steps
             dCdt_convection = -velocity * C(i, k-1) / dx;
         elseif i == discretization
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(discretization - 1, k-1) - C(discretization, k-1)) / dx^2); %+ C(i,k-1)*(1-ion_flux)*(dt/dx);
+            d2Cdx2 = (D * (C(discretization - 1, k-1) - C(discretization, k-1)) / dx^2) + C(i,k-1)*(1-ion_flux)*(dt/dx);
         else
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, k-1) - 2 * C(i, k-1) + C(i - 1, k-1)) / dx^2;
