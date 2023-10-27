@@ -11,10 +11,10 @@ time_length = 0.5;      % Time length (seconds)
 time_steps = 500;       % Number of time steps
 dt = time_length / time_steps;
 
-D = 0.01;               % Diffusion coefficient
-velocity = 0.3;         % Constant velocity (m/s)
-feed_conc = 2; % Constant solute concentration at the first cell
-rejection_rate = 0.1; % No rejection
+D = 0.001;               % Diffusion coefficient
+velocity = 0.2;         % Constant velocity (m/s)
+feed_conc = 1; % Constant solute concentration at the first cell
+rejection_rate = 0.5; % No rejection
 
 %Constants
 R=8.31415; % Gasconstant []
@@ -27,7 +27,7 @@ t = linspace(0, time_length, time_steps);
 % Initialize the concentration array (1D)
 C = ones(domain_steps, time_steps);
 % Initial condition (as a column vector)
-
+C(domain_steps/2,1)=2;
 rho = velocity*dx/dt;
 r = D*dx/dt;
 fprintf(' r = %f \n rho = %f ', r, rho);
