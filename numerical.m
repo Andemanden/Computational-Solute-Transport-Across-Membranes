@@ -14,7 +14,7 @@ dt = time_length / time_steps;
 D = 0.01;               % Diffusion coefficient
 velocity = 0.3;         % Constant velocity (m/s)
 feed_conc = 2; % Constant solute concentration at the first cell
-rejection_rate = 0.5; % No rejection
+rejection_rate = 0.1; % No rejection
 
 %Constants
 R=8.31415; % Gasconstant []
@@ -31,6 +31,9 @@ C = ones(domain_steps, time_steps);
 rho = velocity*dx/dt;
 r = D*dx/dt;
 fprintf(' r = %f \n rho = %f ', r, rho);
+if (1-2*r-rho)<0 
+   fprintf('ERROR: Stabilitetsfejl');
+end
 
 % Time-stepping loop
 for j = 2:time_steps
