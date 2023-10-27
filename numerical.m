@@ -16,6 +16,10 @@ velocity = 0.3;         % Constant velocity (m/s)
 feed_conc = 2; % Constant solute concentration at the first cell
 rejection_rate = 0.5; % No rejection
 
+%Constants
+R=8.31415; % Gasconstant []
+T=273.15+20; %Temperature [K]
+
 % Create a grid for space and time
 x = linspace(0, domain_length, domain_steps);
 t = linspace(0, time_length, time_steps);
