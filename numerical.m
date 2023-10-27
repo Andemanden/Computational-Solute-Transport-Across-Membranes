@@ -14,6 +14,9 @@ dt = time_length / time_steps;
 D = 0.001;               % Diffusion coefficient
 velocity = 0.1;         % Constant velocity (m/s)
 inflow_concentration = 2.0; % Constant solute concentration at the first cell
+D = 0.01;               % Diffusion coefficient
+velocity = 0.6;         % Constant velocity (m/s)
+inflow_concentration = 1.0; % Constant solute concentration at the first cell
 
 % Create a grid for space and time
 x = linspace(0, domain_length, discretization);
@@ -36,8 +39,15 @@ for k = 2:time_steps
         d2Cdx2 = D * (C(min(i + 1, discretization), k-1) - 2 * C(i, k-1) + C(max(i - 1, 1), k-1)) / dx^2;
         
         % Calculate convection term
-        dCdt_convection = -velocity * (C(i, k-1) - C(max(i - 1, 1), k-1)) / dx;
-        
+        if i == 1
+            % Apply advection and inflow at the first cell
+            dCdt_convection = -velocity * C(i, k-1) / dx;
+            C(1, k) = inflow_concentration; % Fill the first cell with inflow concentration
+        else
+            % Apply advection term
+            dCdt_convection = -velocity * (C(i, k-1) - C(i-1, k-1)) / dx;
+        end
+
         % Apply the diffusion-convection equation
         C(i, k) = C(i, k-1) + dt * (d2Cdx2 - rejection_rate * C(i, k-1) + dCdt_convection);
     end
