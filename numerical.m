@@ -15,10 +15,11 @@ dt = time_length / time_steps;
 D = 0.001;               % Diffusion coefficient
 %velocity = 0.2;         % Constant velocity (m/s)
 feed_conc = 1; % Constant solute concentration at the first cell
-fouling_rate = @(time) 0.0007*time; % σ_f (fouling over time) set to 0.0007*time or (2.2/(3+exp(-0.1*time)))^4
+
 
 % Anonymous functions
 velocity_function = @(Conc) 0.2; % Velocity [m/s]
+fouling_rate = @(time) 0.0007*time; % σ_f (fouling over time) set to 0.0007*time or (2.2/(3+exp(-0.1*time)))^4
 rejection_rate = @(time) 0.1+fouling_rate(time); % σ_0+σ_f
 
 %Constants
