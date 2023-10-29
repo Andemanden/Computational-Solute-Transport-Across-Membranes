@@ -15,10 +15,13 @@ dt = time_length / time_steps;
 D = 0.001;               % Diffusion coefficient
 %velocity = 0.2;         % Constant velocity (m/s)
 feed_conc = 1; % Constant solute concentration at the first cell
-rejection_rate = 0.5; % No rejection
+fouling_rate = @(time) 0.0007*time; % σ_f (fouling over time) set to 0.0007*time or (2.2/(3+exp(-0.1*time)))^4
 
-% Velocity function
+
+% Anonymous functions
 velocity_function = @(Conc) 0.2; % Velocity [m/s]
+rejection_rate = @(time) 0.1+fouling_rate(time); % σ_0+σ_f
+
 
 %Constants
 R=8.31415; % Gasconstant []
@@ -51,7 +54,7 @@ for j = 2:time_steps
             dCdt_advection = -velocity_function(T) * C(i, j-1) / dx;
         elseif i == domain_steps %__Membrane Cell___
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate)*velocity_function(T)/(dx);
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate(j))*velocity_function(T)/(dx);
         else    %__Normal Cells__
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
@@ -105,6 +108,9 @@ xlim([0, domain_length]);
 ylim([0, time_length]);
 zlim([0, max(C(:))]); % Assuming max(C(:)) is the maximum concentration in your data
 
-
 set(h,'LineStyle','none')
 %colormap(jet)
+
+
+
+
