@@ -17,11 +17,9 @@ D = 0.001;               % Diffusion coefficient
 feed_conc = 1; % Constant solute concentration at the first cell
 fouling_rate = @(time) 0.0007*time; % σ_f (fouling over time) set to 0.0007*time or (2.2/(3+exp(-0.1*time)))^4
 
-
 % Anonymous functions
 velocity_function = @(Conc) 0.2; % Velocity [m/s]
 rejection_rate = @(time) 0.1+fouling_rate(time); % σ_0+σ_f
-
 
 %Constants
 R=8.31415; % Gasconstant []
