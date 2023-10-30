@@ -16,19 +16,16 @@ D = 0.001;               % Diffusion coefficient
 %velocity = 0.2;         % Constant velocity (m/s)
 feed_conc = 1; % Constant solute concentration at the first cell
 TMP=7; %TMP: Transmembrane Pressure [bar]
-Lv=0.0002; %Water Permiability for all cells
-% Lv=k_w0*exp(-k_b*t)
-Jv = ('Lv*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1))))');
+kb=0.002; % Fouling Constant
+kw=; %Water per
 
 % Anonymous functions
-%velocity_function = @(DeltaConc) Lv*(TMP-(1*R*T*DeltaConc)); % Velocity [m/s]
-%velocity_function2 = @(Conc) 0.2;
 fouling_rate = @(time) 0.0007*time; % σ_f (fouling over time) set to 0.0007*time or (2.2/(3+exp(-0.1*time)))^4
 rejection_rate = @(time) 0.1+fouling_rate(time); % σ_0+σ_f
-
+Lv= @(time) k_w0*exp(-fouling_const*time); %Water Permiability for all cells
 
 %Constants
-R = 8.31415; % Gasconstant []
+R=8.31415; % Gasconstant []
 T=273.15+20; %Temperature [K]
 F= 96.485;%Faraday[C/mol]
 
@@ -47,11 +44,11 @@ r = D*dx/dt;
 %   fprintf('ERROR: Stabilitetsfejl');
 %end
 
-
-
 %% Time-stepping loop
 for j = 2:time_steps
     for i = 1:domain_steps
+        Jv = (Lv*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1)))));  % Velocity [m/s]
+        
         % Calculate the second derivative in x direction
         if i == 1 %__First Cell__
              C(1,:) = feed_conc; % Fill the first cell with inflow concentration

@@ -9,22 +9,20 @@ domain_steps = 100;    % Number of spatial domain_steps points
 dx = domain_length / (domain_steps - 1);
 
 time_length = 0.5;      % Time length (seconds)
-time_steps = 500;       % Number of time steps
+time_steps = 1000;       % Number of time steps
 dt = time_length / time_steps;
 
 D = 0.001;               % Diffusion coefficient
 %velocity = 0.2;         % Constant velocity (m/s)
 feed_conc = 1; % Constant solute concentration at the first cell
-TMP=7; %TMP: Transmembrane Pressure [bar]
-Lv=0.0002; %Water Permiability for all cells
-% Lv=k_w0*exp(-k_b*t)
+TMP=15; %TMP: Transmembrane Pressure [bar]
+kb=0.0002; % Fouling Constant
+kw=0.00021; % Initial water permiability
 
 % Anonymous functions
-%velocity_function = @(DeltaConc) Lv*(TMP-(1*R*T*DeltaConc)); % Velocity [m/s]
-%velocity_function2 = @(Conc) 0.2;
 fouling_rate = @(time) 0.0007*time; % σ_f (fouling over time) set to 0.0007*time or (2.2/(3+exp(-0.1*time)))^4
 rejection_rate = @(time) 0.1+fouling_rate(time); % σ_0+σ_f
-
+Lv= @(time) kw*exp(-kb*time); %Water Permiability for all cells
 
 %Constants
 R=8.31415; % Gasconstant []
@@ -49,7 +47,7 @@ r = D*dx/dt;
 %% Time-stepping loop
 for j = 2:time_steps
     for i = 1:domain_steps
-        Jv = (Lv*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1)))));
+        Jv = (Lv(j)*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1)))));  % Velocity [m/s]
         
         % Calculate the second derivative in x direction
         if i == 1 %__First Cell__
