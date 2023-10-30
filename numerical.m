@@ -25,6 +25,7 @@ Lv=0.0002; %Water Permiability for all cells
 fouling_rate = @(time) 0.0007*time; % σ_f (fouling over time) set to 0.0007*time or (2.2/(3+exp(-0.1*time)))^4
 rejection_rate = @(time) 0.1+fouling_rate(time); % σ_0+σ_f
 
+
 %Constants
 R=8.31415; % Gasconstant []
 T=273.15+20; %Temperature [K]
@@ -48,21 +49,23 @@ r = D*dx/dt;
 %% Time-stepping loop
 for j = 2:time_steps
     for i = 1:domain_steps
+        Jv = (Lv*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1)))));
+        
         % Calculate the second derivative in x direction
         if i == 1 %__First Cell__
              C(1,:) = feed_conc; % Fill the first cell with inflow concentration
             % No left neighbor at the first cell
             d2Cdx2 = D * (C(2, j-1) -  C(1, j-1)) / dx^2;
              % Apply advection and inflow at the first cell
-            dCdt_advection = -(Lv*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1))))) * C(i, j-1) / dx;
+            dCdt_advection = -Jv * C(i, j-1) / dx;
         elseif i == domain_steps %__Membrane Cell___
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate(j))*(Lv*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1)))))/(dx);
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate(j))*Jv/(dx);
         else    %__Normal Cells__
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
             % Apply advection term
-            dCdt_advection = -(Lv*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1))))) * (C(i, j-1) - C(i-1, j-1)) / dx;
+            dCdt_advection = -Jv * (C(i, j-1) - C(i-1, j-1)) / dx;
         end
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
