@@ -48,7 +48,6 @@ r = D*dx/dt;
 for j = 2:time_steps
     for i = 1:domain_steps
         Jv = (Lv(j)*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1)))));  % Velocity [m/s]
-        
         % Calculate the second derivative in x direction
         if i == 1 %__First Cell__
              C(1,:) = feed_conc; % Fill the first cell with inflow concentration
@@ -67,6 +66,7 @@ for j = 2:time_steps
         end
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
+        Jv_values(j) = Jv;
     end
 end
 %velocity_function((C(domain_steps-1, j-1)-C(domain_steps, j-1)))
@@ -76,6 +76,15 @@ time_fraction = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];  % F
 
 % Calculate the corresponding time indices
 time_instances = round(time_fraction * time_steps);
+
+
+% Plot Jv values over time
+figure;
+plot(t, Jv_values);
+xlabel('Time (seconds)');
+ylabel('Jv (Velocity)');
+title('Jv (Velocity) Over Time');
+grid on;
 
 % Create a figure for the first plot
 figure;
@@ -96,6 +105,7 @@ legend(arrayfun(@(f) ['t=', num2str(f)], time_fraction, 'UniformOutput', false))
 
 grid on;
 hold off;
+
 
 %% Plot 2 - 3D
 % Create a 3D surface plot to visualize concentration over time and position
