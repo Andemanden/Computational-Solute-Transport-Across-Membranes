@@ -23,7 +23,7 @@ R=8.31415; % Gasconstant []
 T=273.15+20; %Temperature [K]
 F= 96.485;%Faraday[C/mol
 % Anonymous functions
-rejection_rate = @(time) 0.1; % σ_0+σ_f
+rejection_rate = @(time) 0.4; % σ_0+σ_f
 Lv= @(time) kw*exp(-kb*time); %Water Permiability for all cells
 
 % Create a grid for space and time
