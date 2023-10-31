@@ -7,8 +7,8 @@ domain_length = 0.5;   % Domain length (meters)
 domain_steps = 100;    % Number of spatial domain_steps points
 dx = domain_length / (domain_steps - 1);
 
-time_length = 0.5;      % Time length (seconds)
-time_steps = 1000;       % Number of time steps
+time_length = 5;      % Time length (seconds)
+time_steps = 10000;       % Number of time steps
 dt = time_length / time_steps;
 
 % DEFINED VARIABLES
@@ -16,14 +16,15 @@ D = 0.001;               % Diffusion coefficient
 feed_conc = 1; % Constant solute concentration at the first cell
 TMP=10; %TMP: Transmembrane Pressure [bar]
 kb=0.0005; % Fouling Constant
-kw=0.00029; % Initial water permiability
+kw=0.0003; % Initial water permiability
+rejection_rate = 0.4; % Rejection of the membrane (σ) [procentage]
 
 % PHYSICAL CONSTANTS
-R=8.31415; % Gasconstant []
+R= 0.0831415; % Gasconstant []
 T=273.15+20; %Temperature [K]
-F= 96.485;%Faraday[C/mol
+F= 96.485; %Faraday[C/mol]
+
 % Anonymous functions
-rejection_rate = 0.4; % Rejection of the membrane (σ) [procentage]
 Lv= @(time) kw*exp(-kb*time); %Water Permiability for all cells
 
 % Create a grid for space and time
@@ -32,7 +33,16 @@ t = linspace(0, time_length, time_steps);
 
 % Initialize the concentration array AND Initial condition (1D)
 C = ones(domain_steps, time_steps);
-C(domain_steps/2,1)=2;
+C(domain_steps/2,1)=1.5;
+
+%Diffusive Stability
+DS = D*dx/dt;
+fprintf(' Diffusivity Stability = %f', DS);
+if DS>0.5 
+   fprintf('ERROR: Stabilitetsfejl');
+else
+    fprintf('\n Stable Diffusion Model !!');
+end
 
 
 %% Time-stepping loop
@@ -60,15 +70,6 @@ for j = 2:time_steps
         Jv_values(j) = Jv;
         AS(j) = Jv * dt/dx;
     end
-end
-
-%Diffusive Stability
-DS = D*dx/dt;
-fprintf(' Diffusivity Stability = %f', DS);
-if DS>0.5 
-   fprintf('ERROR: Stabilitetsfejl');
-else
-    fprintf('\n Stable Diffusion Model !!');
 end
 
 %% 2D Plots
