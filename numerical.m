@@ -15,15 +15,15 @@ dt = time_length / time_steps;
 D = 0.001;               % Diffusion coefficient
 feed_conc = 1; % Constant solute concentration at the first cell
 TMP=10; %TMP: Transmembrane Pressure [bar]
-kb=0.0002; % Fouling Constant
-kw=0.00021; % Initial water permiability
+kb=0.0005; % Fouling Constant
+kw=0.00029; % Initial water permiability
 
 % PHYSICAL CONSTANTS
 R=8.31415; % Gasconstant []
 T=273.15+20; %Temperature [K]
 F= 96.485;%Faraday[C/mol
 % Anonymous functions
-rejection_rate = @(time) 0.4; % σ_0+σ_f
+rejection_rate = 0.4; % Rejection of the membrane (σ) [procentage]
 Lv= @(time) kw*exp(-kb*time); %Water Permiability for all cells
 
 % Create a grid for space and time
@@ -48,7 +48,7 @@ for j = 2:time_steps
             dCdt_advection = -Jv * C(i, j-1) / dx;
         elseif i == domain_steps %__Membrane Cell___
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate(j))*Jv/(dx);
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate)*Jv/(dx);
         else    %__Normal Cells__
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
