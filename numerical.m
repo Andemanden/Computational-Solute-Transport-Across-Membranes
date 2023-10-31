@@ -3,24 +3,25 @@ clear
 close all
 clc
 %% Inital Parameters 
-domain_length = 0.5;   % Domain length (meters)
+domain_length = 0.001;   % Domain length (meters)
 domain_steps = 100;    % Number of spatial domain_steps points
 dx = domain_length / (domain_steps - 1);
 
 time_length = 5;      % Time length (seconds)
-time_steps = 10000;       % Number of time steps
+time_steps = 5000;       % Number of time steps
 dt = time_length / time_steps;
 
 % DEFINED VARIABLES
-D = 0.001;               % Diffusion coefficient
+D = 0.846*10^-9; % Diffusivity coefficient H2PO4 in water
 feed_conc = 1; % Constant solute concentration at the first cell
 TMP=10; %TMP: Transmembrane Pressure [bar]
-kb=0.0005; % Fouling Constant
-kw=0.0003; % Initial water permiability
-rejection_rate = 0.4; % Rejection of the membrane (σ) [procentage]
+kb= 0; % Fouling Constant
+kw= 3.044001*10^-4; % Initial water permiability L m^-2 bar^-1 s^-1 
+rejection_rate = 0.1; % Rejection of the membrane (σ) [procentage]
+
 
 % PHYSICAL CONSTANTS
-R= 0.0831415; % Gasconstant []
+R= 8.31415; % Gasconstant []
 T=273.15+20; %Temperature [K]
 F= 96.485; %Faraday[C/mol]
 
@@ -37,9 +38,9 @@ C(domain_steps/2,1)=1.5;
 
 %Diffusive Stability
 DS = D*dx/dt;
-fprintf(' Diffusivity Stability = %f', DS);
+fprintf('\n Diffusivity Stability = %f', DS);
 if DS>0.5 
-   fprintf('ERROR: Stabilitetsfejl');
+   fprintf('\n ERROR: Stabilitetsfejl');
 else
     fprintf('\n Stable Diffusion Model !!');
 end
@@ -48,7 +49,8 @@ end
 %% Time-stepping loop
 for j = 2:time_steps
     for i = 1:domain_steps
-        Jv = (Lv(j)*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1)))));  % Volume flux = Velocity ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
+        Jv = 0.00001; %(Lv(j)*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1)))));  % Volume flux = Velocity ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
+                        %PROBLEM!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         % Calculate the second derivative in x direction
         if i == 1 %__First Cell__
              C(1,:) = feed_conc; % Fill the first cell with inflow concentration
