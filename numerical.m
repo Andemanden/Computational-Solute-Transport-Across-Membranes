@@ -13,7 +13,7 @@ dt = time_length / time_steps;
 
 % DEFINED VARIABLES
 D = 0.846*10^-9; % Diffusivity coefficient H2PO4 in water
-feed_conc = 1; % Constant solute concentration at the first cell
+feed_conc = 0.1; % Constant solute concentration at the first cell 0.1 molar [H2PO4]
 TMP=10; %TMP: Transmembrane Pressure [bar]
 kb= 0; % Fouling Constant
 kw= 3.044001*10^-4; % Initial water permiability L m^-2 bar^-1 s^-1 
@@ -22,25 +22,28 @@ rejection_rate = 0.1; % Rejection of the membrane (σ) [procentage]
 
 % PHYSICAL CONSTANTS
 R= 8.31415; % Gasconstant []
-T=273.15+20; %Temperature [K]
+T= 273.15+20; %Temperature [K]
 F= 96.485; %Faraday[C/mol]
 
 % Anonymous functions
-Lv= @(time) kw*exp(-kb*time); %Water Permiability for all cells
+Lv = @(time) kw*exp(-kb*time); %Water Permiability for all cells
+
+% Percipitation array
+%P = zeros(domain_length,);
 
 % Create a grid for space and time
 x = linspace(0, domain_length, domain_steps);
 t = linspace(0, time_length, time_steps);
 
 % Initialize the concentration array AND Initial condition (1D)
-C = ones(domain_steps, time_steps);
-C(domain_steps/2,1)=1.5;
+C = zeros(domain_steps, time_steps)+0.1; % 0.1 molar [H2PO4]
+C(domain_steps/2,1)=0.3;
 
 %Diffusive Stability
 DS = D*dx/dt;
 fprintf('\n Diffusivity Stability = %f', DS);
 if DS>0.5 
-   fprintf('\n ERROR: Stabilitetsfejl');
+   fprintf(2,'\n ERROR: Stabilitetsfejl');
 else
     fprintf('\n Stable Diffusion Model !!');
 end
@@ -49,8 +52,8 @@ end
 %% Time-stepping loop
 for j = 2:time_steps
     for i = 1:domain_steps
-        Jv = 0.00001; %(Lv(j)*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1)))));  % Volume flux = Velocity ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
-                        %PROBLEM!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Jv = 0.00001; %(Lv(j)*(TMP-(1*R*T*(C(domain_steps-1, j-1)-C(domain_steps, j-1)))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
+                        %PROBLEM!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         % Calculate the second derivative in x direction
         if i == 1 %__First Cell__
              C(1,:) = feed_conc; % Fill the first cell with inflow concentration
