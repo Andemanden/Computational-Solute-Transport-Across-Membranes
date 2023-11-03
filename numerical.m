@@ -5,11 +5,11 @@ clc
 %% Inital Parameters
 domain_length = 0.01;   % Domain length (meters)
 domain_steps = 100;    % Number of spatial domain_steps points
-dx = domain_length / (domain_steps - 1);
+dx = domain_length / (domain_steps - 1); % Position discretization
 
 time_length = 500;      % Time length (seconds)
 time_steps = 5000;       % Number of time steps
-dt = time_length / time_steps;
+dt = time_length / time_steps; % Temporal discretization
 
 % DEFINED VARIABLES
 D = 1.464*10^-9; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
@@ -37,7 +37,7 @@ x = linspace(0, domain_length, domain_steps);
 t = linspace(0, time_length, time_steps);
 
 % Initialize the concentration array AND Initial condition (1D)
-C = zeros(domain_steps, time_steps)+0.1; % 0.1 molar [H2PO4]
+C = zeros(domain_steps, time_steps)+0.1; % 0.1 molar [H2PO4] at pH 2.9
 
 
 %Diffusive Stability
@@ -71,8 +71,8 @@ for j = 2:time_steps
         end
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
-        Jv_values(j) = Jv;
-        AS(j) = Jv * dt/dx;
+        Jv_values(j) = Jv; % Plot values
+        AS(j) = Jv * dt/dx; % Stability plot values
     end
 end
 
