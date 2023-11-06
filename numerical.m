@@ -3,7 +3,7 @@ clear
 close all
 clc
 %% Inital Parameters
-domain_length = 0.01;   % Domain length (meters)
+domain_length = 0.1;   % Domain length (meters)
 domain_steps = 100;    % Number of spatial domain_steps points
 dx = domain_length / (domain_steps - 1); % Position discretization
 
@@ -14,7 +14,7 @@ dt = time_length / time_steps; % Temporal discretization
 % DEFINED VARIABLES
 D = 1.464*10^-9; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
 feed_conc = 0.1; % Constant solute concentration at the first cell 0.1 molar [H2PO4]
-TMP= 5.5; %TMP: Transmembrane Pressure [bar]
+TMP= 5; %TMP: Transmembrane Pressure [bar]
 kb= 0.001; % Fouling Constant
 kw= 3.044001*10^-4; % Initial water permiability L m^-2 bar^-1 s^-1 
 rejection_rate = 0.1; % Rejection of the membrane (σ) [procentage]
@@ -38,7 +38,7 @@ t = linspace(0, time_length, time_steps);
 
 % Initialize the concentration array AND Initial condition (1D)
 C = zeros(domain_steps, time_steps)+0.1; % 0.1 molar [H2PO4] at pH 2.9
-
+C(domain_steps/2) = 0.2;
 
 %Diffusive Stability
 DS = D*dt/dx^2;
@@ -94,6 +94,7 @@ xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
 grid on;
+
 
 % Define fractions of time steps you want to visualize
 time_fraction = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];  % For example, 0.1 corresponds to 10% of time steps
