@@ -38,6 +38,7 @@ Lv = @(conc) 1/(my*(rejection_rate_w+fouling_rate(conc))); % Water permeability 
 % Percipitation array - WORK IN PROGRESS
 %P = zeros(domain_length,);
 
+
 % Create a grid for space and time
 x = linspace(0, domain_length, domain_steps);
 t = linspace(0, time_length, time_steps);
