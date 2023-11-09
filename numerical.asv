@@ -19,7 +19,7 @@ TMP = 15; %TMP: Transmembrane Pressure [bar]
 area = 0.001; % Area of the membrane surface [m^2]
 kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
 my = 0.891*10^-9; % Water viscosity [Bar∙s]
-Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [procentage]
+Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
 
 alpha = 8.244*10^12; % Specific resistance of fouling [m mol m^3]
 
@@ -32,9 +32,13 @@ T= 273.15+25; %Temperature [K]
 % Anonymous functions
 %Lv = @(time) kw*exp(-kb*time); %Water permeability dependent on Fouling
 
-percip_rate = @(conc) 0.3822436157/(1+2.6885457349*exp(-13.1198866*conc)); % The rate of percipitation
+
+percip_rate = @(conc) 0.27; % The rate of percipitation
 Rf = @(conc) alpha*(percip_rate(conc)/area); % Rate of fouling
 Lv = @(conc) 1/(my*(Rm+Rf(conc))); % Water permeability dependent on fouling
+%Lv = @(conc) 1/(my*(Rm+ (alpha*( (0.3822436157/(1+2.6885457349*exp(-13.1198866*conc))) /area)))); % Water permeability dependent on fouling
+
+
 
 % Percipitation array - WORK IN PROGRESS
 %P = zeros(domain_length,);
@@ -61,6 +65,9 @@ end
 for j = 2:time_steps
     for i = 1:domain_steps
         LastC=C(domain_steps, j-1);
+        if LastC>0.14
+           percip_rate = @(conc) 0.3822436157/(1+2.6885457349*exp(-13.1198866*conc)); % The rate of percipitation
+        end
         Jv = (Lv(LastC)*(TMP-(1*R*T*(C(domain_steps, j-1)))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
         %Jv = (Lv*(TMP-(1*R*T*(C(domain_steps, j-1)))));
         C(1, :) = feed_conc; % Set the leftmost boundary to 0.1
