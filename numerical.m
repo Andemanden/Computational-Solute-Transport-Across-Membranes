@@ -14,28 +14,27 @@ dt = time_length / time_steps; % Temporal discretization
 % DEFINED VARIABLES
 D = 1.464*10^-9; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
 feed_conc = 0.1; % Constant solute concentration at the first cell 0.1 molar [H2PO4-]
-TMP = 5; %TMP: Transmembrane Pressure [bar]
+TMP = 15; %TMP: Transmembrane Pressure [bar]
 
 area = 0.001; % Area of the membrane surface [m^2]
 kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
 my = 0.891*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [procentage]
 
-alpha = 9.7915*10^12; % Specific resistance of fouling [m mol m^3]
+alpha = 8.244*10^12; % Specific resistance of fouling [m mol m^3]
 
 sig_m = 0.1; % Rejection of ions 
 
 % PHYSICAL CONSTANTS
 R= 0.0831415; % Gasconstant [L Bar mol^-1 K^-1]
 T= 273.15+25; %Temperature [K]
-F= 96.485; %Faraday[C/mol]
 
 % Anonymous functions
 %Lv = @(time) kw*exp(-kb*time); %Water permeability dependent on Fouling
 
 percip_rate = @(conc) 0.3822436157/(1+2.6885457349*exp(-13.1198866*conc)); % The rate of percipitation
 Rf = @(conc) alpha*(percip_rate(conc)/area); % Rate of fouling
-Lv = @(conc) 1/(my*(Rm+Rf(conc))); % Water permeability dependent on fouling
+Lv = @(conc) 1/(my*(Rm-Rf(conc))); % Water permeability dependent on fouling
 
 % Percipitation array - WORK IN PROGRESS
 %P = zeros(domain_length,);
@@ -61,7 +60,7 @@ end
 %% Time-stepping loop
 for j = 2:time_steps
     for i = 1:domain_steps
-        LastC=C(i,j-1);
+        LastC=C(domain_steps, j-1);
         Jv = (Lv(LastC)*(TMP-(1*R*T*(C(domain_steps, j-1)))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
         %Jv = (Lv*(TMP-(1*R*T*(C(domain_steps, j-1)))));
         C(1, :) = feed_conc; % Set the leftmost boundary to 0.1
