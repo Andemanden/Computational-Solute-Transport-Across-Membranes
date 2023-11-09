@@ -4,24 +4,26 @@ close all
 clc
 %% Inital Parameters
 domain_length = 0.1;   % Domain length (meters)
-domain_steps = 100;    % Number of spatial domain_steps points
+domain_steps = 1000;    % Number of spatial domain_steps points
 dx = domain_length / (domain_steps - 1); % Position discretization
 
-time_length = 500;      % Time length (seconds)
-time_steps = 5000;       % Number of time steps
+time_length = 50;      % Time length (seconds)
+time_steps = 500;       % Number of time steps
 dt = time_length / time_steps; % Temporal discretization
 
 % DEFINED VARIABLES
 D = 1.464*10^-9; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
-feed_conc = 0.1; % Constant solute concentration at the first cell 0.1 molar [H2PO4]
+feed_conc = 0.1; % Constant solute concentration at the first cell 0.1 molar [H2PO4-]
 TMP = 5; %TMP: Transmembrane Pressure [bar]
-kb = 0.001; % Fouling Constant
-kw = 3.044001*10^-4; % Initial water permiability L m^-2 bar^-1 s^-1 
-my = 0.01; % Water viscosity 0.01 [Pa∙s]
-Rm = 1/my*kw; % Rejection of water at the membrane (σ) [procentage]
-Rf = 0.1; % Rejection of ions 
+
 area = 0.001; % Area of the membrane surface [m^2]
-res = 500; % Specific resistance of fouling [i dono unit bro]
+kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
+my = 0.891*10^-9; % Water viscosity [Bar∙s]
+Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [procentage]
+
+alpha = 9.7915*10^12; % Specific resistance of fouling [m mol m^3]
+
+sig_m = 0.1; % Rejection of ions 
 
 % PHYSICAL CONSTANTS
 R= 0.0831415; % Gasconstant [L Bar mol^-1 K^-1]
@@ -31,8 +33,8 @@ F= 96.485; %Faraday[C/mol]
 % Anonymous functions
 %Lv = @(time) kw*exp(-kb*time); %Water permeability dependent on Fouling
 
-percip_rate = @(conc) 1/(1-exp(0.02*conc)); % The rate of percipitation
-fouling_rate = @(conc) res*(percip_rate(conc)/area); % Rate of fouling
+percip_rate = @(conc) 0.3822436157/(1+2.6885457349*exp(-13.1198866*conc)); % The rate of percipitation
+Rf = @(conc) alpha*(percip_rate(conc)/area); % Rate of fouling
 Lv = @(conc) 1/(my*(Rm+Rf(conc))); % Water permeability dependent on fouling
 
 % Percipitation array - WORK IN PROGRESS
@@ -70,7 +72,7 @@ for j = 2:time_steps
 
         elseif i == domain_steps %__Membrane Cell___
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate)*Jv/(dx);
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(sig_m)*Jv/(dx);
         else    %__Normal Cells__
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
