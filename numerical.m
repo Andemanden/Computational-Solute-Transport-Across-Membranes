@@ -18,8 +18,8 @@ TMP = 5; %TMP: Transmembrane Pressure [bar]
 kb = 0.001; % Fouling Constant
 kw = 3.044001*10^-4; % Initial water permiability L m^-2 bar^-1 s^-1 
 my = 0.01; % Water viscosity 0.01 [Pa∙s]
-rejection_rate_w = 1/my*kw; % Rejection of water at the membrane (σ) [procentage]
-rejection_rate_i = 0.1; % Rejection of ions 
+Rm = 1/my*kw; % Rejection of water at the membrane (σ) [procentage]
+Rf = 0.1; % Rejection of ions 
 area = 0.001; % Area of the membrane surface [m^2]
 res = 500; % Specific resistance of fouling [i dono unit bro]
 
@@ -33,7 +33,7 @@ F= 96.485; %Faraday[C/mol]
 
 percip_rate = @(conc) 1/(1-exp(0.02*conc)); % The rate of percipitation
 fouling_rate = @(conc) res*(percip_rate(conc)/area); % Rate of fouling
-Lv = @(conc) 1/(my*(rejection_rate_w+fouling_rate(conc))); % Water permeability dependent on fouling
+Lv = @(conc) 1/(my*(Rm+Rf(conc))); % Water permeability dependent on fouling
 
 % Percipitation array - WORK IN PROGRESS
 %P = zeros(domain_length,);
@@ -70,7 +70,7 @@ for j = 2:time_steps
 
         elseif i == domain_steps %__Membrane Cell___
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate_i)*Jv/(dx);
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(rejection_rate)*Jv/(dx);
         else    %__Normal Cells__
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
