@@ -4,11 +4,11 @@ close all
 clc
 %% Inital Parameters
 domain_length = 0.1;   % Domain length (meters)
-domain_steps = 1000;    % Number of spatial domain_steps points
+domain_steps = 100;    % Number of spatial domain_steps points
 dx = domain_length / (domain_steps - 1); % Position discretization
-
-time_length = 50;      % Time length (seconds)
-time_steps = 500;       % Number of time steps
+ 
+time_length = 5000;      % Time length (seconds)
+time_steps = 5000;       % Number of time steps
 dt = time_length / time_steps; % Temporal discretization
 
 % DEFINED VARIABLES
@@ -20,28 +20,22 @@ area = 0.001; % Area of the membrane surface [m^2]
 kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
 my = 0.891*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
-
-alpha = 8.244*10^12; % Specific resistance of fouling [m mol m^3]
+InitP = 0.263253;
+alpha = 95000000000; % Specific resistance of fouling [m mol m^3]
 
 sig_m = 0.1; % Rejection of ions 
 
 % PHYSICAL CONSTANTS
-R= 0.0831415; % Gasconstant [L Bar mol^-1 K^-1]
+R= 8.31415*10^-2; % Gasconstant [L^3 Bar mol^-1 K^-1]
 T= 273.15+25; %Temperature [K]
-
+ 
 % Anonymous functions
 %Lv = @(time) kw*exp(-kb*time); %Water permeability dependent on Fouling
 
-
-percip_rate = @(conc) 0.27; % The rate of percipitation
-Rf = @(conc) alpha*(percip_rate(conc)/area); % Rate of fouling
+Mp = @(conc) 0.0011*exp(36.328*conc) + 0.263253; % concentration of udfæld in respect to phosphate increase.
+Rf = @(conc) alpha*(Mp(conc)/area); % Rate of fouling
 Lv = @(conc) 1/(my*(Rm+Rf(conc))); % Water permeability dependent on fouling
-%Lv = @(conc) 1/(my*(Rm+ (alpha*( (0.3822436157/(1+2.6885457349*exp(-13.1198866*conc))) /area)))); % Water permeability dependent on fouling
 
-
-
-% Percipitation array - WORK IN PROGRESS
-%P = zeros(domain_length,);
 
 % Create a grid for space and time
 x = linspace(0, domain_length, domain_steps);
@@ -64,13 +58,18 @@ end
 %% Time-stepping loop
 for j = 2:time_steps
     for i = 1:domain_steps
-        LastC=C(domain_steps, j-1);
-        if LastC>0.14
-           percip_rate = @(conc) 0.3822436157/(1+2.6885457349*exp(-13.1198866*conc)); % The rate of percipitation
-        end
-        Jv = (Lv(LastC)*(TMP-(1*R*T*(C(domain_steps, j-1)))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
-        %Jv = (Lv*(TMP-(1*R*T*(C(domain_steps, j-1)))));
+        LastC = C(domain_steps, j-1);
+
         C(1, :) = feed_conc; % Set the leftmost boundary to 0.1
+
+        if j == 2
+            Ptot = InitP; % The rate of percipitation WI
+        else
+            Ptot = Mp(LastC);
+        end
+
+        Jv = (Lv(LastC)*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
+
         % Calculate the second derivative in x direction
         if i == 1 %__First Cell__
             d2Cdx2 = 0;
@@ -88,11 +87,20 @@ for j = 2:time_steps
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
         Jv_values(j) = Jv; % Plot values
+        P_values(j) = Ptot;
         AS(j) = Jv * dt/dx; % Stability plot values
     end
 end
 
 %% 2D Plots
+% Plot Percipitate (DS) values over time
+
+figure;
+plot(t, P_values);
+xlabel('Time (seconds)');
+ylabel('percipitate ');
+title('percipitate  Over Time');
+grid on;
 
 % Plot Advection Stability (DS) values over time
 
