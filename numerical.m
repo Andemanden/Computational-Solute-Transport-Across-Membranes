@@ -43,7 +43,7 @@ t = linspace(0, time_length, time_steps);
 
 % Initialize the concentration array AND Initial condition (1D)
 C = zeros(domain_steps, time_steps)+0.1; % 0.1 molar [H2PO4] at pH 2.9
-C(domain_steps/2) = 0.2;
+C(domain_steps/2) = 0.13;
 
 %Diffusive Stability
 DS = D*dt/dx^2;
@@ -91,8 +91,19 @@ for j = 2:time_steps
         AS(j) = Jv * dt/dx; % Stability plot values
     end
 end
+%% CONSERVATION ERROR
+
+Systemdiff = [0, diff(sum(C,1))];
+
+inflow = Jv_values*feed_conc*dt/dx;
+outflow = C(domain_steps, :).* Jv_values *(1-sig_m)*dt/dx;
+
+ERROR = Systemdiff - inflow + outflow;
+
+
 
 %% 2D Plots
+
 % Plot Percipitate (DS) values over time
 
 figure;
