@@ -20,7 +20,7 @@ area = 0.001; % Area of the membrane surface [m^2]
 kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
 my = 0.891*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
-InitP = 0.263253;
+InitP = 0.263253+0.0011; % Initial percipitation
 alpha = 95000000000; % Specific resistance of fouling [m mol m^3]
 
 sig_m = 0.1; % Rejection of ions 
@@ -93,12 +93,12 @@ for j = 2:time_steps
 end
 %% CONSERVATION ERROR
 
-Systemdiff = [0, diff(sum(C,1))];
+Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
 
-inflow = Jv_values*feed_conc*dt/dx;
-outflow = C(domain_steps, :).* Jv_values *(1-sig_m)*dt/dx;
+inflow = Jv_values*feed_conc*dt/dx; % Inflow array
+outflow = C(domain_steps, :).* Jv_values *(1-sig_m)*dt/dx; % Outflow array 
 
-ERROR = Systemdiff - inflow + outflow;
+ERROR = Systemdiff - inflow + outflow; 
 
 
 
