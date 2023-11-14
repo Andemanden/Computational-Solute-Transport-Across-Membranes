@@ -22,6 +22,7 @@ my = 0.891*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
 InitP = 0.263253+0.0011; % Initial percipitation
 alpha = 95000000000; % Specific resistance of fouling [m mol m^3]
+PC = 0.5; %Percipitate Advection Coefficient
 
 sig_m = 0.1; % Rejection of ions 
 
@@ -65,7 +66,7 @@ for j = 2:time_steps
         if j == 2
             Ptot = InitP; % The rate of percipitation WI
         else
-            Ptot = Mp(LastC) + (Mp(LastC) - InitP)*Jv*(dt/dx);
+            Ptot = Mp(LastC) + (Mp(LastC) - InitP)*Jv*(dt/dx)*PC;
         end
 
         Jv = (Lv(LastC)*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
@@ -95,8 +96,8 @@ end
 
 Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
 
-inflow = Jv_values*feed_conc*dt/dx; % Inflow array
-outflow = C(domain_steps, :).* Jv_values *(1-sig_m)*dt/dx; % Outflow array 
+inflow = Jv_values*feed_conc*(dt/dx); % Inflow array
+outflow = C(domain_steps, :).* Jv_values*(1-sig_m)*(dt/dx); % Outflow array 
 
 ERROR = Systemdiff - inflow + outflow; % The mass conservation error
 
