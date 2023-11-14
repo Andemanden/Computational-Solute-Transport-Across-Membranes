@@ -104,6 +104,16 @@ ERROR = Systemdiff - inflow + outflow; % The mass conservation error
 
 %% 2D Plots
 
+% Plot Mass Conservation Error values over time
+
+figure;
+plot(t, ERROR);
+xlabel('Time (seconds)');
+ylabel('Error ');
+title('Mass Conservation Error Over Time');
+grid on;
+
+
 % Plot Percipitate (DS) values over time
 
 figure;
