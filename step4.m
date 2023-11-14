@@ -4,11 +4,11 @@ close all
 clc
 %% Inital Parameters
 domain_length = 0.1;   % Domain length (meters)
-domain_steps = 100;    % Number of spatial domain_steps points
+domain_steps = 1000;    % Number of spatial domain_steps points
 dx = domain_length / (domain_steps - 1); % Position discretization
- 
-time_length = 5000;      % Time length (seconds)
-time_steps = 5000;       % Number of time steps
+
+time_length = 500;      % Time length (seconds)
+time_steps = 500;       % Number of time steps
 dt = time_length / time_steps; % Temporal discretization
 
 % DEFINED VARIABLES
@@ -22,6 +22,7 @@ my = 0.891*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
 InitP = 0.263253+0.0011; % Initial percipitation
 alpha = 95000000000; % Specific resistance of fouling [m mol m^3]
+PC = 0.5; %Percipitate Advection Coefficient
 
 sig_m = 0.1; % Rejection of ions 
 
@@ -43,7 +44,7 @@ t = linspace(0, time_length, time_steps);
 
 % Initialize the concentration array AND Initial condition (1D)
 C = zeros(domain_steps, time_steps)+0.1; % 0.1 molar [H2PO4] at pH 2.9
-C(domain_steps/2) = 0.13;
+
 
 %Diffusive Stability
 DS = D*dt/dx^2;
@@ -65,13 +66,13 @@ for j = 2:time_steps
         if j == 2
             Ptot = InitP; % The rate of percipitation WI
         else
-            Ptot = Mp(LastC);
+            Ptot = Mp(LastC) + (Mp(LastC) - InitP)*Jv*(dt/dx)*PC;
         end
 
         Jv = (Lv(LastC)*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
 
         % Calculate the second derivative in x direction
-        if i == 1 %__First Cell__
+        if i == 1 %_Left Cell__
             d2Cdx2 = 0;
             dCdt_advection = 0;
 
@@ -95,14 +96,24 @@ end
 
 Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
 
-inflow = Jv_values*feed_conc*dt/dx; % Inflow array
-outflow = C(domain_steps, :).* Jv_values *(1-sig_m)*dt/dx; % Outflow array 
+inflow = Jv_values*feed_conc*(dt/dx); % Inflow array
+outflow = C(domain_steps, :).* Jv_values*(1-sig_m)*(dt/dx); % Outflow array 
 
-ERROR = Systemdiff - inflow + outflow; 
+ERROR = Systemdiff - inflow + outflow; % The mass conservation error
 
 
 
 %% 2D Plots
+
+% Plot Mass Conservation Error values over time
+
+figure;
+plot(t, ERROR);
+xlabel('Time (seconds)');
+ylabel('Error ');
+title('Mass Conservation Error Over Time');
+grid on;
+
 
 % Plot Percipitate (DS) values over time
 
@@ -165,9 +176,9 @@ hold off;
 figure;
 h = surf(X, T, C); % Transpose removed here
 xlabel('Position (meters)');
-ylabel('Time (seconds)');
-zlabel('Concentration');
-title('Concentration Over Time and Position');
+ylabel('Tid (sekunder)');
+zlabel('Koncentration');
+title('Koncentration Over Tid og Position');
 
 % Set axis limits to start at the origin
 xlim([0, domain_length]);
