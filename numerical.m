@@ -21,7 +21,7 @@ kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1
 my = 0.8903*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
 alpha = 1*10^14; % Specific resistance of fouling [m mol m^3]
-PC = 0.2; %Percipitate Advection Coefficient
+PC = 0.5; %Percipitate Advection Coefficient
 
 sig_m = 0.1; % Rejection of ions 
 
