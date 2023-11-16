@@ -14,14 +14,14 @@ dt = time_length / time_steps; % Temporal discretization
 % DEFINED VARIABLES
 D = 0; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
 feed_conc = 0.1; % Constant solute concentration at the first cell 0.1 molar [H2PO4-]
-TMP = 15; %TMP: Transmembrane Pressure [bar]
+TMP = 35; %TMP: Transmembrane Pressure [bar]
 
 area = 0.001; % Area of the membrane surface [m^2]
 kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
 my = 0.8903*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
 InitP = 0.263253+0.0011; % Initial percipitation
-alpha = 95000000000; % Specific resistance of fouling [m mol m^3]
+alpha = 0; % Specific resistance of fouling [m mol m^3]
 PC = 0.5; %Percipitate Advection Coefficient
 
 sig_m = 0.1; % Rejection of ions 
@@ -68,7 +68,7 @@ for j = 2:time_steps
             Ptot = Mp(LastC) + (Mp(LastC) - InitP)*Jv*(dt/dx)*PC;
         end
 
-        Jv = (kw*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
+        Jv = (kw*(TMP));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
 
         % Calculate the second derivative in x direction
         if i == 1 %__First Cell__
@@ -77,12 +77,12 @@ for j = 2:time_steps
 
         elseif i == domain_steps %__Membrane Cell___
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(sig_m)*Jv/(dx);
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2);
         else    %__Normal Cells__
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
             % Apply advection term
-            dCdt_advection = 0; %-Jv * (C(i, j-1) - C(i-1, j-1)) / dx;
+            dCdt_advection = -Jv * (C(i, j-1) - C(i-1, j-1)) / dx;
         end
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
@@ -174,18 +174,19 @@ hold off;
 [T, X] = meshgrid(t, x);
 figure;
 h = surf(X, T, C); % Transpose removed here
-xlabel('Position (meters)');
+xlabel('Position (meter)');
 ylabel('Tid (sekunder)');
-zlabel('Koncentration');
+zlabel('Koncentration (M)');
 title('Koncentration Over Tid og Position');
 
 % Set axis limits to start at the origin
 xlim([0, domain_length]);
 ylim([0, time_length]);
-zlim([0, max(C(:))]); % Assuming max(C(:)) is the maximum concentration in your data
+zlim([0, 1.5]); % Assuming max(C(:)) is the maximum concentration in your data
 
 set(h,'LineStyle','none')
-%colormap(jet)
+colormap(jet)
+clim([0 1.5])
 
 
 

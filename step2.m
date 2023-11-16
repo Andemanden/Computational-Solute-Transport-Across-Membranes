@@ -14,7 +14,7 @@ dt = time_length / time_steps; % Temporal discretization
 % DEFINED VARIABLES
 D = 0; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
 feed_conc = 0.1; % Constant solute concentration at the first cell 0.1 molar [H2PO4-]
-TMP = 15; %TMP: Transmembrane Pressure [bar]
+TMP = 35; %TMP: Transmembrane Pressure [bar]
 
 area = 0.001; % Area of the membrane surface [m^2]
 kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
@@ -175,18 +175,19 @@ hold off;
 [T, X] = meshgrid(t, x);
 figure;
 h = surf(X, T, C); % Transpose removed here
-xlabel('Position (meters)');
-ylabel('Time (seconds)');
-zlabel('Concentration');
-title('Concentration Over Time and Position');
+xlabel('Position (meter)');
+ylabel('Tid (sekunder)');
+zlabel('Koncentration (M)');
+title('Koncentration Over Tid og Position');
 
 % Set axis limits to start at the origin
 xlim([0, domain_length]);
 ylim([0, time_length]);
-zlim([0, max(C(:))]); % Assuming max(C(:)) is the maximum concentration in your data
+zlim([0, 1.5]); % Assuming max(C(:)) is the maximum concentration in your data
 
 set(h,'LineStyle','none')
-%colormap(jet)
+colormap(jet)
+clim([0 1.5])
 
 
 

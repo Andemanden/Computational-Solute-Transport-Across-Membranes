@@ -64,7 +64,7 @@ for j = 2:time_steps
         if j == 2
             Ptot = Mp(feed_conc); % The rate of percipitation WI
         else
-            Ptot = Mp(LastC) + (Mp(LastC) - Mp(feed_conc))*Jv*(dt/dx)*PC;
+            Ptot = Mp(i,j-1) + (Mp(LastC) - Mp(feed_conc))*Jv*(dt/dx)*PC; %%% CHECK CODE!!!!!!
         end
 
         Jv = (Lv(LastC)*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
@@ -181,10 +181,11 @@ title('Concentration Over Time and Position');
 % Set axis limits to start at the origin
 xlim([0, domain_length]);
 ylim([0, time_length]);
-zlim([0, max(C(:))]); % Assuming max(C(:)) is the maximum concentration in your data
+zlim([0, 0.15]); % Assuming max(C(:)) is the maximum concentration in your data
 
 set(h,'LineStyle','none')
-%colormap(jet)
+colormap(jet)
+clim([0.1 0.115])
 
 
 
