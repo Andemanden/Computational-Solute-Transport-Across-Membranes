@@ -143,7 +143,7 @@ grid on;
 
 
 % Define fractions of time steps you want to visualize
-time_fraction = [0.001, 0.01, 0.1, 0.25, 0.9];  % For example, 0.1 corresponds to 10% of time steps
+time_fraction = [0.001, 0.01, 0.1, 0.25, 0.5, 0.9];  % For example, 0.1 corresponds to 10% of time steps
 
 % Calculate the corresponding time indices
 time_instances = round(time_fraction * time_steps);
@@ -158,9 +158,11 @@ for i = 1:length(time_instances)
     plot(x, C(:, time_index));
 end
 
-xlabel('Position (meters)');
-ylabel('Concentration');
-title('Concentration Over Time at Different Instances');
+xlabel('Position (meter)');
+ylabel('Koncentration (M)');
+title('Koncentration over Position ved Forskellige Tidsfraktioner');
+xlim([0.0975, domain_length]);
+ylim([0.1, 0.118]);
 
 % Add a legend for clarity
 legend(arrayfun(@(f) ['t=', num2str(f)], time_fraction, 'UniformOutput', false));
@@ -183,7 +185,7 @@ title('Koncentration Over Tid og Position');
 % Set axis limits to start at the origin
 xlim([0, domain_length]);
 ylim([0, time_length]);
-zlim([0, 1.5]); % Assuming max(C(:)) is the maximum concentration in your data
+zlim([0, 0.12]); % Assuming max(C(:)) is the maximum concentration in your data
 
 set(h,'LineStyle','none')
 colormap(jet)
