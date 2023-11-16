@@ -14,24 +14,22 @@ dt = time_length / time_steps; % Temporal discretization
 % DEFINED VARIABLES
 D = 1.464*10^-9; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
 feed_conc = 0.1; % Constant solute concentration at the first cell 0.1 molar [H2PO4-]
-TMP = 15; %TMP: Transmembrane Pressure [bar]
+TMP = 35; %TMP: Transmembrane Pressure [bar]
 
-area = 0.001; % Area of the membrane surface [m^2]
+area = 0.0308; % Area of the membrane surface [m^2]
 kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
 my = 0.8903*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
-InitP = 0.263253+0.0011; % Initial percipitation
-alpha = 95000000000; % Specific resistance of fouling [m mol m^3]
-PC = 0.5; %Percipitate Advection Coefficient
+alpha = 1*10^14; % Specific resistance of fouling [m mol m^3]
+PC = 0.2; %Percipitate Advection Coefficient
 
 sig_m = 0.1; % Rejection of ions 
 
 % PHYSICAL CONSTANTS
-R= 8.31415*10^-2; % Gasconstant [L^3 Bar mol^-1 K^-1]
-T= 273.15+25; %Temperature [K]
+R = 8.31415*10^-2; % Gasconstant [L^3 Bar mol^-1 K^-1]
+T = 273.15+25; %Temperature [K]
  
 % Anonymous functions
-%Lv = @(time) kw*exp(-kb*time); %Water permeability dependent on Fouling
 
 Mp = @(conc) 0.0011*exp(36.328*conc) + 0.263253; % concentration of udfæld in respect to phosphate increase.
 Rf = @(conc) alpha*(Mp(conc)/area); % Rate of fouling
@@ -64,12 +62,12 @@ for j = 2:time_steps
         C(1, :) = feed_conc; % Set the leftmost boundary to 0.1
 
         if j == 2
-            Ptot = InitP; % The rate of percipitation WI
+            Ptot = Mp(feed_conc); % The rate of percipitation WI
         else
-            Ptot = Mp(LastC) + (Mp(LastC) - InitP)*Jv*(dt/dx)*PC;
+            Ptot = Mp(LastC) + (Mp(LastC) - Mp(feed_conc))*Jv*(dt/dx)*PC;
         end
 
-        Jv = (kw*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
+        Jv = (Lv(LastC)*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
 
         % Calculate the second derivative in x direction
         if i == 1 %__First Cell__
