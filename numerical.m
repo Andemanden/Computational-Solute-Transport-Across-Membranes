@@ -4,11 +4,11 @@ close all
 clc
 %% Inital Parameters
 domain_length = 0.1;   % Domain length (meters)
-domain_steps = 100;    % Number of spatial domain_steps points
+domain_steps = 1000;    % Number of spatial domain_steps points
 dx = domain_length / (domain_steps - 1); % Position discretization
  
-time_length = 5000;      % Time length (seconds)
-time_steps = 5000;       % Number of time steps
+time_length = 500;      % Time length (seconds)
+time_steps = 500;       % Number of time steps
 dt = time_length / time_steps; % Temporal discretization
 
 % DEFINED VARIABLES
@@ -18,7 +18,7 @@ TMP = 15; %TMP: Transmembrane Pressure [bar]
 
 area = 0.001; % Area of the membrane surface [m^2]
 kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
-my = 0.891*10^-9; % Water viscosity [Bar∙s]
+my = 0.8903*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
 InitP = 0.263253+0.0011; % Initial percipitation
 alpha = 95000000000; % Specific resistance of fouling [m mol m^3]
@@ -44,7 +44,7 @@ t = linspace(0, time_length, time_steps);
 
 % Initialize the concentration array AND Initial condition (1D)
 C = zeros(domain_steps, time_steps)+0.1; % 0.1 molar [H2PO4] at pH 2.9
-C(domain_steps/2) = 0.13;
+%C(domain_steps/2) = 0.13;
 
 %Diffusive Stability
 DS = D*dt/dx^2;
@@ -69,7 +69,7 @@ for j = 2:time_steps
             Ptot = Mp(LastC) + (Mp(LastC) - InitP)*Jv*(dt/dx)*PC;
         end
 
-        Jv = (Lv(LastC)*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
+        Jv = (kw*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
 
         % Calculate the second derivative in x direction
         if i == 1 %__First Cell__

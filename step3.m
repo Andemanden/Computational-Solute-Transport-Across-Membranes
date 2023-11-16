@@ -18,7 +18,7 @@ TMP = 15; %TMP: Transmembrane Pressure [bar]
 
 area = 0.001; % Area of the membrane surface [m^2]
 kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
-my = 0.891*10^-9; % Water viscosity [Bar∙s]
+my = 0.8903*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
 InitP = 0.263253+0.0011; % Initial percipitation
 alpha = 95000000000; % Specific resistance of fouling [m mol m^3]
