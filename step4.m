@@ -184,11 +184,9 @@ title('Koncentration Over Tid og Position');
 % Set axis limits to start at the origin
 xlim([0, domain_length]);
 ylim([0, time_length]);
-zlim([0, 0.12]); % Assuming max(C(:)) is the maximum concentration in your data
+zlim([0, 1.5]); % Assuming max(C(:)) is the maximum concentration in your data
 
 set(h,'LineStyle','none')
 colormap(jet)
 clim([0.1 0.12])
-
-
 
