@@ -86,7 +86,7 @@ for j = 2:time_steps
         end
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
-        Jv_values(j) = Jv; % Plot values
+        Jv_values1(j) = Jv; % Plot values
         P_values(j) = Ptot;
         AS(j) = Jv * dt/dx; % Stability plot values
     end
@@ -95,8 +95,8 @@ end
 
 Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
 
-inflow = Jv_values*feed_conc*(dt/dx); % Inflow array
-outflow = C(domain_steps, :).* Jv_values*(1-sig_m)*(dt/dx); % Outflow array 
+inflow = Jv_values1*feed_conc*(dt/dx); % Inflow array
+outflow = C(domain_steps, :).* Jv_values1*(1-sig_m)*(dt/dx); % Outflow array 
 
 ERROR = Systemdiff - inflow + outflow; % The mass conservation error
 
@@ -134,7 +134,7 @@ grid on;
 
 % Plot Jv values over time
 figure;
-plot(t, Jv_values);
+plot(t, Jv_values1);
 xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
@@ -188,6 +188,8 @@ set(h,'LineStyle','none')
 colormap(jet)
 clim([0 1.5])
 
+%%
+save('step1jv', 'Jv_values1')
 
 
 
