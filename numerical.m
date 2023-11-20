@@ -91,7 +91,8 @@ for j = 2:time_steps
     end
 end
 %% CONSERVATION ERROR
-
+Jv_values(1) = []; 
+Jv_values(end+1) = 0; 
 Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
 
 inflow = Jv_values*feed_conc*(dt/dx); % Inflow array
