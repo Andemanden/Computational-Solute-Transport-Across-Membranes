@@ -91,15 +91,13 @@ for j = 2:time_steps
     end
 end
 %% CONSERVATION ERROR
-<<<<<<< Updated upstream
 Jv_values(1) = []; 
 Jv_values(end+1) = 0; 
-=======
+
 
 check = [0,C(domain_steps, :)];
 check(end) = [];
 
->>>>>>> Stashed changes
 Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
 inflow = Jv_values*feed_conc*(dt/dx); % Inflow array
 outflow = check.* Jv_values*(1-sig_m)*(dt/dx); % Out-concentration array 
