@@ -140,7 +140,10 @@ xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
 grid on;
-ylim([1.09*10^-6, 1.125*10^-6]);
+ylim([1.09*10^-6, 1.13*10^-6]);
+ax = gca;
+ax.YAxis.Exponent = -6;
+
 
 % Define fractions of time steps you want to visualize
 time_fraction = [0.001, 0.01, 0.1, 0.25, 0.5, 0.9];  % For example, 0.1 corresponds to 10% of time steps

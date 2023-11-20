@@ -6,7 +6,7 @@ clc
 domain_length = 0.1;   % Domain length (meters)
 domain_steps = 1000;    % Number of spatial domain_steps points
 dx = domain_length / (domain_steps - 1); % Position discretization
- 
+
 time_length = 500;      % Time length (seconds)
 time_steps = 500;       % Number of time steps
 dt = time_length / time_steps; % Temporal discretization
@@ -14,11 +14,11 @@ dt = time_length / time_steps; % Temporal discretization
 % DEFINED VARIABLES
 D = 0; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
 feed_conc = 0.1; % Constant solute concentration at the first cell 0.1 molar [H2PO4-]
-TMP = 35; %TMP: Transmembrane Pressure [bar]
+TMP = 15; %TMP: Transmembrane Pressure [bar]
 
 area = 0.001; % Area of the membrane surface [m^2]
 kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
-my = 0.8903*10^-9; % Water viscosity [Bar∙s]
+my = 0.891*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
 InitP = 0.263253+0.0011; % Initial percipitation
 alpha = 95000000000; % Specific resistance of fouling [m mol m^3]
@@ -87,7 +87,7 @@ for j = 2:time_steps
         end
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
-        Jv_values2(j) = Jv; % Plot values
+        Jv_values(j) = Jv; % Plot values
         P_values(j) = Ptot;
         AS(j) = Jv * dt/dx; % Stability plot values
     end
@@ -96,8 +96,8 @@ end
 
 Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
 
-inflow = Jv_values2*feed_conc*(dt/dx); % Inflow array
-outflow = C(domain_steps, :).* Jv_values2*(1-sig_m)*(dt/dx); % Outflow array 
+inflow = Jv_values*feed_conc*(dt/dx); % Inflow array
+outflow = C(domain_steps, :).* Jv_values*(1-sig_m)*(dt/dx); % Outflow array 
 
 ERROR = Systemdiff - inflow + outflow; % The mass conservation error
 
@@ -135,7 +135,7 @@ grid on;
 
 % Plot Jv values over time
 figure;
-plot(t, Jv_values2);
+plot(t, Jv_values);
 xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
@@ -175,22 +175,18 @@ hold off;
 [T, X] = meshgrid(t, x);
 figure;
 h = surf(X, T, C); % Transpose removed here
-xlabel('Position (meter)');
-ylabel('Tid (sekunder)');
-zlabel('Koncentration (M)');
-title('Koncentration Over Tid og Position');
+xlabel('Position (meters)');
+ylabel('Time (seconds)');
+zlabel('Concentration');
+title('Concentration Over Time and Position');
 
 % Set axis limits to start at the origin
 xlim([0, domain_length]);
 ylim([0, time_length]);
-zlim([0, 1.5]); % Assuming max(C(:)) is the maximum concentration in your data
+zlim([0, max(C(:))]); % Assuming max(C(:)) is the maximum concentration in your data
 
 set(h,'LineStyle','none')
-colormap(jet)
-clim([0 1.5])
-
-%%
-save('step2jv', 'Jv_values2')
+%colormap(jet)
 
 
 
