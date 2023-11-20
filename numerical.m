@@ -95,7 +95,7 @@ end
 Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
 
 inflow = Jv_values*feed_conc*(dt/dx); % Inflow array
-outflow = C(domain_steps, :).* Jv_values*(1-sig_m)*(dt/dx); % Outflow array 
+outflow = C(domain_steps, :).* Jv_values*(1-sig_m)*(dt/dx); % Out-concentration array 
 
 ERROR = Systemdiff - inflow + outflow; % The mass conservation error
 
@@ -110,6 +110,16 @@ plot(t, ERROR);
 xlabel('Time (seconds)');
 ylabel('Error ');
 title('Mass Conservation Error Over Time');
+grid on;
+
+
+% Plot Mass Conservation Error values over time
+
+figure;
+plot(t, outflow);
+xlabel('Time (seconds)');
+ylabel('Cp ');
+title('Cp');
 grid on;
 
 
@@ -138,7 +148,10 @@ xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
 grid on;
-
+xlim([0, 500]);
+ylim([1.09*10^-6, 1.13*10^-6]);
+ax = gca;
+ax.YAxis.Exponent = -6;
 
 % Define fractions of time steps you want to visualize
 time_fraction = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];  % For example, 0.1 corresponds to 10% of time steps
@@ -159,6 +172,8 @@ end
 xlabel('Position (meters)');
 ylabel('Concentration');
 title('Concentration Over Time at Different Instances');
+xlim([0.0975, domain_length]);
+ylim([0.1, 0.118]);
 
 % Add a legend for clarity
 legend(arrayfun(@(f) ['t=', num2str(f)], time_fraction, 'UniformOutput', false));

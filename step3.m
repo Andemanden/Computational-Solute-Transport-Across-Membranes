@@ -20,8 +20,6 @@ area = 0.001; % Area of the membrane surface [m^2]
 kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
 my = 0.8903*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
-InitP = 0.263253+0.0011; % Initial percipitation
-alpha = 95000000000; % Specific resistance of fouling [m mol m^3]
 PC = 0.5; %Percipitate Advection Coefficient
 
 sig_m = 0.1; % Rejection of ions 
@@ -63,12 +61,6 @@ for j = 2:time_steps
 
         C(1, :) = feed_conc; % Set the leftmost boundary to 0.1
 
-        if j == 2
-            Ptot = InitP; % The rate of percipitation WI
-        else
-            Ptot = Mp(LastC) + (Mp(LastC) - InitP)*Jv*(dt/dx)*PC;
-        end
-
         Jv = (kw*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
 
         % Calculate the second derivative in x direction
@@ -88,7 +80,6 @@ for j = 2:time_steps
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
         Jv_values3(j) = Jv; % Plot values
-        P_values(j) = Ptot;
         AS(j) = Jv * dt/dx; % Stability plot values
     end
 end
@@ -101,9 +92,18 @@ outflow = C(domain_steps, :).* Jv_values3*(1-sig_m)*(dt/dx); % Outflow array
 
 ERROR = Systemdiff - inflow + outflow; % The mass conservation error
 
-
-
 %% 2D Plots
+
+% Plot Mass Conservation Error values over time
+
+figure;
+plot(t, outflow);
+xlabel('Time (seconds)');
+ylabel('Cp ');
+title('Cp');
+grid on;
+
+
 
 % Plot Mass Conservation Error values over time
 
@@ -112,16 +112,6 @@ plot(t, ERROR);
 xlabel('Time (seconds)');
 ylabel('Error ');
 title('Mass Conservation Error Over Time');
-grid on;
-
-
-% Plot Percipitate (DS) values over time
-
-figure;
-plot(t, P_values);
-xlabel('Time (seconds)');
-ylabel('percipitate ');
-title('percipitate  Over Time');
 grid on;
 
 % Plot Advection Stability (DS) values over time
@@ -141,9 +131,9 @@ ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
 grid on;
 xlim([0, 500]);
-ylim([1.83*10^-5, 1.87*10^-5]);
+ylim([1.82*10^-5, 1.88*10^-5]);
 ax = gca;
-ax.YAxis.Exponent = -6;
+ax.YAxis.Exponent = -5;
 
 % Define fractions of time steps you want to visualize
 time_fraction = [0.001, 0.01, 0.1, 0.25, 0.5, 0.9];  % For example, 0.1 corresponds to 10% of time steps
