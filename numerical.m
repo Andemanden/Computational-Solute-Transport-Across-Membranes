@@ -76,7 +76,9 @@ for j = 2:time_steps
 
         elseif i == domain_steps %__Membrane Cell___
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(sig_m)*Jv/(dx);
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1))) / dx^2;
+            dCdt_advection = -Jv * (C(domain_steps, j-1)*(1-sig_m) - C(domain_steps - 1, j-1)) / dx;
+
         else    %__Normal Cells__
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
@@ -90,15 +92,19 @@ for j = 2:time_steps
         AS(j) = Jv * dt/dx; % Stability plot values
     end
 end
-%% CONSERVATION ERROR
+%% conservation and error
 
-check = [0,C(domain_steps, :)];
-check(end) = [];
-Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
-inflow = Jv_values*feed_conc*(dt/dx); % Inflow array
-outflow = check.* Jv_values*(1-sig_m)*(dt/dx); % Out-concentration array 
+volprc = dx*area*1000;  % Volume per cell in Liters
 
-ERROR = Systemdiff - (inflow - outflow); % The mass conservation error
+Cw = [0,C(domain_steps, :)]; % Making the matrix line up properly and have the right size
+Cw(end) = [];
+
+Systemdiff = [0, diff(sum(C*volprc,1))]; % Difference in system concentration per dt
+
+inflow = feed_conc*(Jv_values)*(dt/dx)*volprc; % In - mol
+outflow = Cw.* Jv_values*(dt/dx)*volprc*(1-sig_m); % Out - mol
+infoutdiff = (inflow - outflow);
+ERROR = ((Systemdiff - infoutdiff).*Systemdiff.^(-1))*100; % The mass conservation error
 
 
 %% 2D Plots
@@ -108,7 +114,7 @@ ERROR = Systemdiff - (inflow - outflow); % The mass conservation error
 figure;
 plot(t, ERROR);
 xlabel('Time (seconds)');
-ylabel('Error ');
+ylabel('% Error');
 title('Mass Conservation Error Over Time');
 grid on;
 
@@ -143,7 +149,7 @@ grid on;
 
 % Plot Jv values over time
 figure;
-plot(t, [0, Jv_values]);
+plot(t, [Jv_values]);
 xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');

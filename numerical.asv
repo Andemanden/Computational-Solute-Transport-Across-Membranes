@@ -94,7 +94,7 @@ end
 
 check = [0,C(domain_steps, :)];
 check(end) = [];
-Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
+Systemdiff = [0, diff(sum(C*dx*area,1))]; % Diffrence in systemsums
 inflow = Jv_values*feed_conc*(dt/dx); % Inflow array
 outflow = check.* Jv_values*(1-sig_m)*(dt/dx); % Out-concentration array 
 

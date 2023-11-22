@@ -12,7 +12,7 @@ time_steps = 500;       % Number of time steps
 dt = time_length / time_steps; % Temporal discretization
 
 % DEFINED VARIABLES
-D = 1.464*10^-9; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
+D = 0; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
 feed_conc = 0.1; % Constant solute concentration at the first cell 0.1 molar [H2PO4-]
 TMP = 35; %TMP: Transmembrane Pressure [bar]
 
@@ -84,13 +84,19 @@ for j = 2:time_steps
     end
 end
 %% CONSERVATION ERROR
+volprc = dx*area*1000;  % Volume per cell in Liters
 
-Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
+Cw = [0,C(domain_steps, :)];
+Cw(end) = [];
+NCw =[0,C(domain_steps-1, :)];
+NCw(end) = [];
+Systemdiff = [0, diff(sum(C*volprc,1))]; % Difference in system concentration per dt
 
-inflow = Jv_values3*feed_conc*(dt/dx); % Inflow array
-outflow = C(domain_steps, :).* Jv_values3*(1-sig_m)*(dt/dx); % Outflow array 
+inflow =  (feed_conc + (Cw - NCw)).*(-Jv_values3)*(dt/dx)*volprc; % Inflow array
+outflow = Cw.* Jv_values3*(dt/dx)*volprc*(1-sig_m); % Out-concentration array 
+infoutdiff = (inflow - outflow);
+ERROR = (Systemdiff - infoutdiff).*Systemdiff.^(-1); % The mass conservation error
 
-ERROR = Systemdiff - inflow + outflow; % The mass conservation error
 
 %% 2D Plots
 
@@ -130,8 +136,6 @@ xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
 grid on;
-xlim([0, 500]);
-ylim([1.82*10^-5, 1.88*10^-5]);
 ax = gca;
 ax.YAxis.Exponent = -5;
 
@@ -178,7 +182,6 @@ title('Koncentration Over Tid og Position');
 % Set axis limits to start at the origin
 xlim([0, domain_length]);
 ylim([0, time_length]);
-zlim([0, 0.12]); % Assuming max(C(:)) is the maximum concentration in your data
 
 set(h,'LineStyle','none')
 colormap(jet)
