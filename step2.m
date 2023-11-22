@@ -78,7 +78,9 @@ for j = 2:time_steps
 
         elseif i == domain_steps %__Membrane Cell___
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(sig_m)*Jv/(dx);
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1))) / dx^2;
+            dCdt_advection = -Jv * (C(domain_steps, j-1)*(1-sig_m) - C(domain_steps - 1, j-1)) / dx;
+
         else    %__Normal Cells__
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
@@ -87,20 +89,24 @@ for j = 2:time_steps
         end
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
-        Jv_values(j) = Jv; % Plot values
+        Jv_values2(j) = Jv; % Plot values
         P_values(j) = Ptot;
         AS(j) = Jv * dt/dx; % Stability plot values
     end
 end
-%% CONSERVATION ERROR
+%% conservation and error
 
-Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
+volprc = dx*area*1000;  % Volume per cell in Liters
 
-inflow = Jv_values*feed_conc*(dt/dx); % Inflow array
-outflow = C(domain_steps, :).* Jv_values*(1-sig_m)*(dt/dx); % Outflow array 
+Cw = [0,C(domain_steps, :)]; % Making the matrix line up properly and have the right size
+Cw(end) = [];
 
-ERROR = Systemdiff - inflow + outflow; % The mass conservation error
+Systemdiff = [0, diff(sum(C*volprc,1))]; % Difference in system concentration per dt
 
+inflow = feed_conc*(Jv_values2)*(dt/dx)*volprc; % In - mol
+outflow = Cw.* Jv_values2*(dt/dx)*volprc*(1-sig_m); % Out - mol
+infoutdiff = (inflow - outflow);
+ERROR = ((Systemdiff - infoutdiff).*Systemdiff.^(-1))*100; % The mass conservation error
 
 
 %% 2D Plots
@@ -135,7 +141,7 @@ grid on;
 
 % Plot Jv values over time
 figure;
-plot(t, Jv_values);
+plot(t, Jv_values2);
 xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
@@ -175,19 +181,20 @@ hold off;
 [T, X] = meshgrid(t, x);
 figure;
 h = surf(X, T, C); % Transpose removed here
-xlabel('Position (meters)');
-ylabel('Time (seconds)');
-zlabel('Concentration');
-title('Concentration Over Time and Position');
+xlabel('Position (meter)');
+ylabel('Tid (sekunder)');
+zlabel('Koncentration (M)');
+title('Koncentration Over Tid og Position');
 
 % Set axis limits to start at the origin
 xlim([0, domain_length]);
 ylim([0, time_length]);
-zlim([0, max(C(:))]); % Assuming max(C(:)) is the maximum concentration in your data
+zlim([0.1, 0.12]); % Assuming max(C(:)) is the maximum concentration in your data
 
 set(h,'LineStyle','none')
-%colormap(jet)
+colormap(jet)
+clim([0.1 0.12])
 
-
-
+%%
+save('step2jv', 'Jv_values2')
 

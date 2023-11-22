@@ -12,11 +12,11 @@ time_steps = 500;       % Number of time steps
 dt = time_length / time_steps; % Temporal discretization
 
 % DEFINED VARIABLES
-D = 0; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
+D = 1.464*10^-9; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
 feed_conc = 0.1; % Constant solute concentration at the first cell 0.1 molar [H2PO4-]
 TMP = 35; %TMP: Transmembrane Pressure [bar]
 
-area = 0.001; % Area of the membrane surface [m^2]
+area = 0.0308; % Area of the membrane surface [m^2]
 kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
 my = 0.8903*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
@@ -67,10 +67,12 @@ for j = 2:time_steps
         if i == 1 %_Left Cell__
             d2Cdx2 = 0;
             dCdt_advection = 0;
-
+        
         elseif i == domain_steps %__Membrane Cell___
             % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(sig_m)*Jv/(dx);
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1))) / dx^2;
+            dCdt_advection = -Jv * (C(domain_steps, j-1)*(1-sig_m) - C(domain_steps - 1, j-1)) / dx;
+
         else    %__Normal Cells__
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
@@ -83,20 +85,19 @@ for j = 2:time_steps
         AS(j) = Jv * dt/dx; % Stability plot values
     end
 end
-%% CONSERVATION ERROR
+%% conservation and error
+
 volprc = dx*area*1000;  % Volume per cell in Liters
 
-Cw = [0,C(domain_steps, :)];
+Cw = [0,C(domain_steps, :)]; % Making the matrix line up properly and have the right size
 Cw(end) = [];
-NCw =[0,C(domain_steps-1, :)];
-NCw(end) = [];
+
 Systemdiff = [0, diff(sum(C*volprc,1))]; % Difference in system concentration per dt
 
-inflow =  (feed_conc + (Cw - NCw)).*(-Jv_values3)*(dt/dx)*volprc; % Inflow array
-outflow = Cw.* Jv_values3*(dt/dx)*volprc*(1-sig_m); % Out-concentration array 
+inflow = feed_conc*(Jv_values3)*(dt/dx)*volprc; % In - mol
+outflow = Cw.* Jv_values3*(dt/dx)*volprc*(1-sig_m); % Out - mol
 infoutdiff = (inflow - outflow);
-ERROR = (Systemdiff - infoutdiff).*Systemdiff.^(-1); % The mass conservation error
-
+ERROR = ((Systemdiff - infoutdiff).*Systemdiff.^(-1))*100; % The mass conservation error
 
 %% 2D Plots
 
@@ -182,6 +183,7 @@ title('Koncentration Over Tid og Position');
 % Set axis limits to start at the origin
 xlim([0, domain_length]);
 ylim([0, time_length]);
+zlim([0.1, 0.12]); % Assuming max(C(:)) is the maximum concentration in your data
 
 set(h,'LineStyle','none')
 colormap(jet)

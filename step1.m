@@ -78,6 +78,8 @@ for j = 2:time_steps
         elseif i == domain_steps %__Membrane Cell___
             % No right neighbor at the last cell and MEMBRANE
             d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2);
+            dCdt_advection = -Jv * (C(i, j-1) - C(i-1, j-1)) / dx;
+
         else    %__Normal Cells__
             % Calculate the second derivative normally
             d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
@@ -91,15 +93,19 @@ for j = 2:time_steps
         AS(j) = Jv * dt/dx; % Stability plot values
     end
 end
-%% CONSERVATION ERROR
+%% conservation and error
 
-Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
+volprc = dx*area*1000;  % Volume per cell in Liters
 
-inflow = Jv_values1*feed_conc*(dt/dx); % Inflow array
-outflow = C(domain_steps, :).* Jv_values1*(1-sig_m)*(dt/dx); % Outflow array 
+Cw = [0,C(domain_steps, :)]; % Making the matrix line up properly and have the right size
+Cw(end) = [];
 
-ERROR = Systemdiff - inflow + outflow; % The mass conservation error
+Systemdiff = [0, diff(sum(C*volprc,1))]; % Difference in system concentration per dt
 
+inflow = feed_conc*(Jv_values1)*(dt/dx)*volprc; % In - mol
+outflow = Cw.* Jv_values1*(dt/dx)*volprc*(1-sig_m); % Out - mol
+infoutdiff = (inflow - outflow);
+ERROR = ((Systemdiff - infoutdiff).*Systemdiff.^(-1))*100; % The mass conservation error
 
 
 %% 2D Plots
@@ -123,7 +129,7 @@ ylabel('percipitate ');
 title('percipitate  Over Time');
 grid on;
 
-% Plot Advection Stability (DS) values over time
+% Plot Advection Stability (DS) values over time (Keep under 0.5)
 
 figure;
 plot(t, AS);
@@ -182,11 +188,11 @@ title('Koncentration Over Tid og Position');
 % Set axis limits to start at the origin
 xlim([0, domain_length]);
 ylim([0, time_length]);
-zlim([0, 1.5]); % Assuming max(C(:)) is the maximum concentration in your data
+zlim([0.1, 0.12]); % Assuming max(C(:)) is the maximum concentration in your data
 
 set(h,'LineStyle','none')
 colormap(jet)
-clim([0 1.5])
+clim([0.1 0.12])
 
 %%
 save('step1jv', 'Jv_values1')
