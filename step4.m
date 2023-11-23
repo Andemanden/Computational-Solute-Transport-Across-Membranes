@@ -65,7 +65,7 @@ for j = 2:time_steps
         if j == 2
             Ptot = Mp(feed_conc); % The rate of percipitation WI
         else
-            Ptot = Mp(LastC) + (Mp(LastC) - Mp(feed_conc))*Jv*(dt/dx)*PC; %%% CHECK CODE!!!!!!
+            Ptot = Mp(LastC) + Jv*Mp(feed_conc)*(dt/dx)*PC; %%% CHECK CODE!!!!!!
         end
 
         Jv = (Lv(LastC)*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
