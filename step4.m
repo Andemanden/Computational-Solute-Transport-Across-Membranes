@@ -126,7 +126,7 @@ figure;
 plot(t, P_values);
 xlabel('Tid [s]');
 ylabel('Udfældning [mol L^{-1}] ');
-title('Udfældning Over Time');
+title('Udfældning Over Tid');
 grid on;
 ylim([0.3, 0.35]);
 
@@ -136,7 +136,7 @@ figure;
 plot(t, AS);
 xlabel('Time (seconds)');
 ylabel('Advection Stability');
-title('Advection Stability Over Time');
+title('Advection Stability Over Tid');
 grid on;
 
 % Plot Jv values over time
