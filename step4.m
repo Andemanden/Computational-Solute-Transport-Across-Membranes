@@ -198,7 +198,7 @@ zlim([0.1, 0.12]); % Assuming max(C(:)) is the maximum concentration in your dat
 
 set(h,'LineStyle','none')
 colormap(jet)
-clim([0.1, 0.12])
+clim([0.1, 0.11])
 
 
 %%
