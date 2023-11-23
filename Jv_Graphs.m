@@ -29,26 +29,19 @@ grid on;
 
 legend('Step 1', 'Step 2', 'Step 3', 'Step 4');
 
-%%new graph
+%% new graph
+
 figure;
-plot(x, Jv_values3, 'LineWidth', 1.5);
+yyaxis left
+    plot(x, Jv_values2, 'LineWidth', 1.5);
+    plot(x, Jv_values3, 'LineWidth', 1.5);
+
+yyaxis right
+    plot(x, Jv_values4, 'LineWidth', 1.5);
+
 xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time 3');
 grid on;
-%ylim([, ])
-ax = gca;
-ax.YAxis.Exponent = -5;
-legend('Step 3');
-
-figure;
-plot(x, Jv_values4, 'LineWidth', 1.5);
-xlabel('Time (seconds)');
-ylabel('Jv (Velocity)');
-title('Jv (Velocity) Over Time 4');
-grid on;
-%ylim([, ])
-ax = gca;
-ax.YAxis.Exponent = -5;
-legend('Step 4');
+legend('Step 2', 'Step 3', 'Step 4');
 

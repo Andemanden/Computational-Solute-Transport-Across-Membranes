@@ -124,9 +124,9 @@ grid on;
 
 figure;
 plot(t, P_values);
-xlabel('Time (seconds)');
-ylabel('percipitate ');
-title('percipitate  Over Time');
+xlabel('Tid [s]');
+ylabel('Udfældning [mol L^{-1}] ');
+title('Udfældning Over Time');
 grid on;
 ylim([0.3, 0.35]);
 
