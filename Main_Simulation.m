@@ -59,12 +59,12 @@ for j = 2:time_steps
     for i = 1:domain_steps
         LastC = C(domain_steps, j-1);
 
-        C(1, :) = feed_conc; % Set the leftmost boundary to 0.1
+        C(1, :) = feed_conc; % Set the leftmost boundary to 0.1M
 
         if j == 2
-            Ptot = Mp(feed_conc); % The rate of percipitation WI
+            Ptot = Mp(feed_conc); % The rate of percipitation
         else
-            Ptot = Mp(LastC) + (Mp(LastC) - Mp(feed_conc))*Jv*(dt/dx)*PC; %%% CHECK CODE!!!!!!
+            Ptot = Mp(LastC) + Jv*Mp(feed_conc)*(dt/dx)*PC; % Advection of Percipitate
         end
 
         Jv = (Lv(LastC)*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
@@ -149,7 +149,7 @@ grid on;
 
 % Plot Jv values over time
 figure;
-plot(t, [Jv_values]);
+plot(t, Jv_values);
 xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
