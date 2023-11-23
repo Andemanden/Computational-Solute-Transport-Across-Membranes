@@ -60,15 +60,7 @@ end
 for j = 2:time_steps
     for i = 1:domain_steps
         LastC = C(domain_steps, j-1);
-
         C(1, :) = feed_conc; % Set the leftmost boundary to 0.1
-
-        if j == 2
-            Ptot = InitP; % The rate of percipitation WI
-        else
-            Ptot = Mp(LastC) + (Mp(LastC) - InitP)*Jv*(dt/dx)*PC;
-        end
-
         Jv = (kw*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
 
         % Calculate the second derivative in x direction
@@ -90,7 +82,6 @@ for j = 2:time_steps
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
         Jv_values2(j) = Jv; % Plot values
-        P_values(j) = Ptot;
         AS(j) = Jv * dt/dx; % Stability plot values
     end
 end
@@ -120,15 +111,6 @@ ylabel('Error ');
 title('Mass Conservation Error Over Time');
 grid on;
 
-
-% Plot Percipitate (DS) values over time
-
-figure;
-plot(t, P_values);
-xlabel('Time (seconds)');
-ylabel('percipitate ');
-title('percipitate  Over Time');
-grid on;
 
 % Plot Advection Stability (DS) values over time
 
@@ -181,9 +163,9 @@ hold off;
 [T, X] = meshgrid(t, x);
 figure;
 h = surf(X, T, C); % Transpose removed here
-xlabel('Position (meter)');
-ylabel('Tid (sekunder)');
-zlabel('Koncentration (M)');
+xlabel('Position [m]');
+ylabel('Tid [s]');
+zlabel('Koncentration [mol L^{-1}]');
 title('Koncentration Over Tid og Position');
 
 % Set axis limits to start at the origin

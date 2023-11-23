@@ -26,9 +26,9 @@ PC = 0.5; %Percipitate Advection Coefficient
 sig_m = 0.1; % Rejection of ions 
 
 % PHYSICAL CONSTANTS
-R= 8.31415*10^-2; % Gasconstant [L^3 Bar mol^-1 K^-1]
-T= 273.15+25; %Temperature [K]
- 
+R = 8.31415*10^-2; % Gasconstant [L^3 Bar mol^-1 K^-1]
+T = 273.15+25; %Temperature [K]
+
 % Anonymous functions
 %Lv = @(time) kw*exp(-kb*time); %Water permeability dependent on Fouling
 
@@ -114,9 +114,9 @@ ERROR = ((Systemdiff - infoutdiff).*Systemdiff.^(-1))*100; % The mass conservati
 
 figure;
 plot(t, ERROR);
-xlabel('Time (seconds)');
-ylabel('Error ');
-title('Mass Conservation Error Over Time');
+xlabel('Tid [s]');
+ylabel('Afvigelse [%]');
+title('Procentvis afvigelse Over Tid');
 grid on;
 
 
@@ -146,7 +146,7 @@ xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
 grid on;
-ylim([1.185*10^-5, 1.245*10^-5]);
+%ylim([1.185*10^-5, 1.245*10^-5]);
 ax = gca;
 ax.YAxis.Exponent = -5;
 
@@ -170,8 +170,8 @@ end
 xlabel('Position (meter)');
 ylabel('Koncentration (M)');
 title('Koncentration over Position ved Forskellige Tidsfraktioner');
-xlim([0.0975, domain_length]);
-ylim([0.1, 0.118]);
+xlim([0.099, domain_length]);
+ylim([0.1, 0.12]);
 
 % Add a legend for clarity
 legend(arrayfun(@(f) ['t=', num2str(f)], time_fraction, 'UniformOutput', false));
@@ -198,7 +198,7 @@ zlim([0.1, 0.12]); % Assuming max(C(:)) is the maximum concentration in your dat
 
 set(h,'LineStyle','none')
 colormap(jet)
-clim([0.1 0.12])
+clim([0.1, 0.12])
 
 
 %%

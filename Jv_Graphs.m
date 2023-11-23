@@ -36,7 +36,9 @@ xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time 3');
 grid on;
-ylim([18.24*10^-6, 18.64*10^-6])
+%ylim([, ])
+ax = gca;
+ax.YAxis.Exponent = -5;
 legend('Step 3');
 
 figure;
@@ -45,6 +47,8 @@ xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time 4');
 grid on;
-ylim([1.09*10^-6, 1.13*10^-6])
+%ylim([, ])
+ax = gca;
+ax.YAxis.Exponent = -5;
 legend('Step 4');
 

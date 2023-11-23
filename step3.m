@@ -156,11 +156,11 @@ for i = 1:length(time_instances)
     plot(x, C(:, time_index));
 end
 
-xlabel('Position (meter)');
-ylabel('Koncentration (M)');
+xlabel('Position [m]');
+ylabel('Koncentration [mol L^{-1}]');
 title('Koncentration over Position ved Forskellige Tidsfraktioner');
-xlim([0.0975, domain_length]);
-ylim([0.1, 0.118]);
+xlim([0.099, domain_length]);
+ylim([0.1, 0.12]);
 
 % Add a legend for clarity
 legend(arrayfun(@(f) ['t=', num2str(f)], time_fraction, 'UniformOutput', false));
@@ -175,9 +175,9 @@ hold off;
 [T, X] = meshgrid(t, x);
 figure;
 h = surf(X, T, C); % Transpose removed here
-xlabel('Position (meter)');
-ylabel('Tid (sekunder)');
-zlabel('Koncentration (M)');
+xlabel('Position [m]');
+ylabel('Tid [s]');
+zlabel('Koncentration [mol L^{-1}]');
 title('Koncentration Over Tid og Position');
 
 % Set axis limits to start at the origin
