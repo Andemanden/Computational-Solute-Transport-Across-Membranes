@@ -4,23 +4,23 @@ close all
 clc
 %% Inital Parameters
 Lx = 0.1;   % Domain length [m]
-domain_steps = 1000;    % Number of spatial domain_steps points
-dx = Lx / (domain_steps - 1); % Position discretization
+domain_steps = 1000;    % Number of spatial domain steps
+dx = Lx / (domain_steps - 1); % Position discretization [m]
  
-Lt = 500;      % Time length (seconds)
+Lt = 500;      % Time length [s]
 time_steps = 500;       % Number of time steps
-dt = Lt / time_steps; % Temporal discretization
+dt = Lt / time_steps; % Temporal discretization [s]
 
 % DEFINED VARIABLES
 D = 1.464*10^-9; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
-Cf = 0.1; % Feed concentration [mol L^-1]
-DeltaP = 35; %TMP: Transmembrane Pressure [bar]
+Cf = 0.1; % Ionconcentration of the feed [mol L^-1]
+DeltaP = 35; % Change in outer pressure [bar]
 
-Am = 0.0308; % Area of the membrane surface [m^2]
+Am = 0.0308; % Surfacearea of the membrane [m^2]
 k0 = 5.7311*10^(-7); % Initial water permeability [m^3 m^-2 bar^-1 s^-1] 
-mu = 0.8903*10^-9; % Water viscosity [Bar∙s]
-Rm = 1/(mu*k0); % Rejection of water at the membrane (σ) [m^-1]
-alpha = 1*10^14; % Specific resistance of fouling [m L mol^-1]
+mu = 0.8903*10^-9; % Viscosity of water [bar∙s]
+Rm = 1/(mu*k0); %  Membraneresitance of water [m^-1]
+alpha = 1*10^14; % Specific fouling resistance [m · kg-1] or [m L mol^-1]
 JuScalar = 0.5; %Percipitate Advection Coefficient
 
 sig_i = 0.1; % Rejection of ions 
