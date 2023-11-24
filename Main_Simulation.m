@@ -31,22 +31,21 @@ T = 273.15+25; %Temperature [K]
  
 % Anonymous functions
 
-Udf = @(conc) 0.0011*exp(36.328*conc) + 0.263253; % concentration of udfæld in respect to phosphate increase. [mol L^-1]
-Rf = @(conc) alpha*(Udf(conc)/Am); % Rate of fouling [m^-1]
-k = @(conc) 1/(mu*(Rm+Rf(conc))); % Water permeability dependent on fouling [m^3 m^-2 bar^-1 s^-1]
+Udf = @(conc) 0.0011*exp(36.328*conc) + 0.263253; % Concentration of percipitation in respect to phosphate increase [mol L^-1]
+Rf = @(conc) alpha*(Udf(conc)/Am); % Foulingresistance [m^-1]
+k = @(conc) 1/(mu*(Rm+Rf(conc))); % Water permeability dependent on mu,Rm and Rf [m^3 m^-2 bar^-1 s^-1]
 
 
 % Create a grid for space and time
 x = linspace(0, Lx, domain_steps);
 t = linspace(0, Lt, time_steps);
 
-% Initialize the concentration array AND Initial condition (1D)
-C = zeros(domain_steps, time_steps)+0.1; % 0.1 molar [H2PO4] at pH 2.9
+% Initialize the concentration array (1D)
+C = zeros(domain_steps, time_steps)+0.1; % 0.1 [mol L^-1] H2PO4- at pH 2.9
 
 
-%Diffusive Stability
-
-DS = D*dt/dx^2;
+% Diffusive Stability
+DS = D*dt/dx^2; % Diffusive stability value
 fprintf('\n Diffusivity Stability = %f', DS);
 if DS>0.5 
    fprintf(2,'\n ERROR: Stabilitetsfejl');
@@ -58,36 +57,36 @@ end
 %% Time-stepping loop
 for j = 2:time_steps
     for i = 1:domain_steps
-        Ciw = C(domain_steps, j-1);
+        Ciw = C(domain_steps, j-1); % Concentration of ions at the wall [mol L^-1]
 
-        C(1, :) = Cf; % Set the leftmost boundary to 0.1M
+        C(1, :) = Cf; % Set the leftmost boundary to feedconstration [mol L^-1]
 
-        if j == 2
+        if j == 2   
             Cbw = Udf(Cf); % The rate of percipitation
         else
-            Cbw = Udf(Ciw) + Jkonv*Udf(Cf)*(dt/dx)*JuScalar; % Advection of Percipitate
+            Cbw = Udf(Ciw) + Jkonv*Udf(Cf)*(dt/dx)*JuScalar; % Concentration of percipitate from it's advection [mol L^-1]
         end
 
-        Jkonv = (k(Ciw)*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv ,  in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
+        Jkonv = (k(Ciw)*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv , in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
 
         % Calculate the second derivative in x direction
         if i == 1 %__First Cell__
-            Jdiff = 0;
-            Jadv = 0;
+            Jdiff = 0; % Diffusive ionflux
+            Jadv = 0; % Advective flux
 
         elseif i == domain_steps %__Membrane Cell___
             % No right neighbor at the last cell and MEMBRANE
-            Jdiff = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1))) / dx^2;
-            Jadv = -Jkonv * (C(domain_steps, j-1)*(1-sig_i) - C(domain_steps - 1, j-1)) / dx;
+            Jdiff = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1))) / dx^2; % Diffusive ionflux [mol · m-2 · s-1]
+            Jadv = -Jkonv * (C(domain_steps, j-1)*(1-sig_i) - C(domain_steps - 1, j-1)) / dx; % Advective flux [mol · m-2 · s-1]
 
         else    %__Normal Cells__
             % Calculate the second derivative normally
-            Jdiff = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
+            Jdiff = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2; % Diffusive ionflux [mol · m-2 · s-1]
             % Apply advection term
-            Jadv = -Jkonv * (C(i, j-1) - C(i-1, j-1)) / dx;
+            Jadv = -Jkonv * (C(i, j-1) - C(i-1, j-1)) / dx; % Advective flux [mol · m-2 · s-1]
         end
         % Apply the diffusion-advection-(electromigration) equation
-        C(i, j) = C(i, j-1) + dt * (Jdiff + Jadv);
+        C(i, j) = C(i, j-1) + dt * (Jdiff + Jadv); % Concentration of cell
         Jkonv_values(j) = Jkonv; % Plot values
         Cbw_values(j) = Cbw; 
         AS(j) = Jkonv * dt/dx; % Stability plot values
@@ -199,7 +198,7 @@ set(h,'LineStyle','none')
 colormap(jet)
 clim([0.1, 0.11])
 
-%%
+%% Organize
 load('step1jv.mat', 'Jv_values1');
 load('step2jv.mat', 'Jv_values2');
 load('step3jv.mat', 'Jv_values3');
@@ -211,7 +210,7 @@ Jv_values2 = Jv_values2(2:end);
 Jv_values3 = Jv_values3(2:end);
 Jv_values4 = Jv_values4(2:end);
 
-%%
+%% Jv graph
 
 % Create a figure for the first plot
 figure;
