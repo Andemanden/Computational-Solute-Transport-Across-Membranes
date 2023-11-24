@@ -69,13 +69,11 @@ for j = 2:time_steps
 
         Jkonv = (k(Ciw)*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv , in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
 
-        % Calculate the second derivative in x direction
         if i == 1 % First Cell (no left neighbor)
             Jdiff = 0;       % Diffusive ionflux
             Jadv = 0;        % Advective flux
 
         elseif i == domain_steps % Membrane wall cell (no right neighbor)
-            % No right neighbor at the last cell and MEMBRANE
             Jdiff = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1))) / dx^2;           % Diffusive ionflux [mol · m-2 · s-1]
             Jadv = -Jkonv * (C(domain_steps, j-1)*(1-sig_i) - C(domain_steps - 1, j-1)) / dx; % Advective flux [mol · m-2 · s-1]
 
