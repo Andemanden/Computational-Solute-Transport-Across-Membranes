@@ -3,7 +3,7 @@ clear
 close all
 clc
 %% Inital Parameters
-Lx = 0.1;   % Domain length (meters)
+Lx = 0.1;   % Domain length [m]
 domain_steps = 1000;    % Number of spatial domain_steps points
 dx = Lx / (domain_steps - 1); % Position discretization
  
@@ -63,9 +63,9 @@ for j = 2:time_steps
         C(1, :) = Cf; % Set the leftmost boundary to 0.1M
 
         if j == 2
-            Cuw = Udf(Cf); % The rate of percipitation
+            Cbw = Udf(Cf); % The rate of percipitation
         else
-            Cuw = Udf(Ciw) + Jkonv*Udf(Cf)*(dt/dx)*JuScalar; % Advection of Percipitate
+            Cbw = Udf(Ciw) + Jkonv*Udf(Cf)*(dt/dx)*JuScalar; % Advection of Percipitate
         end
 
         Jkonv = (k(Ciw)*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv ,  in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
@@ -89,7 +89,7 @@ for j = 2:time_steps
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (Jdiff + Jadv);
         Jkonv_values(j) = Jkonv; % Plot values
-        Cuw_values(j) = Cuw;
+        Cuw_values(j) = Cbw; 
         AS(j) = Jkonv * dt/dx; % Stability plot values
     end
 end
@@ -145,7 +145,7 @@ grid on;
 
 figure;
 plot(t, AS);
-xlabel('Time (seconds)');
+xlabel('Tid [s]');
 ylabel('Advection Stabilitet');
 title('Advection Stabilitet Over Tid');
 grid on;
