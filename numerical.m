@@ -13,27 +13,27 @@ dt = Lt / time_steps; % Temporal discretization
 
 % DEFINED VARIABLES
 D = 1.464*10^-9; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
-Cf = 0.1; % Feed concentration [mol L^-1]
-DeltaP = 35; %TMP: Transmembrane Pressure [bar]
+Cf = 0.1; % Feed concentration of H2PO4- [mol L^-1]
+DeltaP = 35; %Transmembrane Pressure [bar]
 
-Am = 0.0308; % Area of the membrane surface [m^2]
-k0 = 5.7311*10^(-7); % Initial water permeability [m^3 m^-2 bar^-1 s^-1] 
+A = 0.0308; % Area of the membrane surface [m^2]
+k0 = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
 mu = 0.8903*10^-9; % Water viscosity [Bar∙s]
-Rm = 1/(mu*k0); % Rejection of water at the membrane (σ) [m^-1]
-alpha = 1*10^14; % Specific resistance of fouling [m L mol^-1]
-JpScalar = 0.5; %Percipitate Advection Coefficient
+RM = 1/(mu*k0); % Rejection of water at the membrane (σ) [m^-1]
+alpha = 1*10^14; % Specific resistance of fouling [m*mol^-1*L]
+JpScalar = 0.5; % Percipitate Advection Coefficient
 
-sig_i = 0.1; % Rejection of ions 
+sig_i = 0.1; % Rejection of ions
 
 % PHYSICAL CONSTANTS
-R = 8.31415*10^-2; % Gasconstant [L Bar mol^-1 K^-1]
-T = 273.15+25; %Temperature [K]
+R = 8.31415*10^-2; % Gasconstant [dm^3 Bar mol^-1 K^-1]
+T = 273.15+25; % Temperature [K]
  
 % Anonymous functions
 
-Udf = @(conc) 0.0011*exp(36.328*conc) + 0.263253; % concentration of udfæld in respect to phosphate increase. [mol L^-1]
-Rf = @(conc) alpha*(Udf(conc)/Am); % Rate of fouling [m^-1]
-k = @(conc) 1/(mu*(Rm+Rf(conc))); % Water permeability dependent on fouling [m^3 m^-2 bar^-1 s^-1]
+Mp = @(conc) 0.0011*exp(36.328*conc) + 0.263253; % concentration of udfæld in respect to phosphate increase.
+Rf = @(conc) alpha*(Mp(conc)/A); % Rate of fouling
+Lv = @(conc) 1/(mu*(RM+Rf(conc))); % Water permeability dependent on fouling
 
 
 % Create a grid for space and time
@@ -42,10 +42,9 @@ t = linspace(0, Lt, time_steps);
 
 % Initialize the concentration array AND Initial condition (1D)
 C = zeros(domain_steps, time_steps)+0.1; % 0.1 molar [H2PO4] at pH 2.9
-
+%C(domain_steps/2) = 0.13;
 
 %Diffusive Stability
-
 DS = D*dt/dx^2;
 fprintf('\n Diffusivity Stability = %f', DS);
 if DS>0.5 
@@ -58,54 +57,48 @@ end
 %% Time-stepping loop
 for j = 2:time_steps
     for i = 1:domain_steps
-        Ciw = C(domain_steps, j-1);
+        LastC = C(domain_steps, j-1);
 
-        C(1, :) = Cf; % Set the leftmost boundary to 0.1M
+        C(1, :) = Cf; % Set the leftmost boundary to 0.1
 
         if j == 2
-            Cuw = Udf(Cf); % The rate of percipitation
+            Ptot = Mp(Cf); % The rate of percipitation WI
         else
-            Cuw = Udf(Ciw) + Jkonv*Udf(Cf)*(dt/dx)*JpScalar; % Advection of Percipitate
+            Ptot = Mp(LastC) + (Mp(LastC) - Mp(Cf))*Jv*(dt/dx)*JpScalar; %%% CHECK CODE!!!!!!
         end
 
-        Jkonv = (k(Ciw)*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv ,  in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
+        Jv = (Lv(LastC)*(DeltaP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (DeltaP, R, T, delta_C) and Lv. [m/s]
 
         % Calculate the second derivative in x direction
         if i == 1 %__First Cell__
-            Jdiff = 0;
-            Jadv = 0;
+            d2Cdx2 = 0;
+            dCdt_advection = 0;
 
         elseif i == domain_steps %__Membrane Cell___
             % No right neighbor at the last cell and MEMBRANE
-            Jdiff = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1))) / dx^2;
-            Jadv = -Jkonv * (C(domain_steps, j-1)*(1-sig_i) - C(domain_steps - 1, j-1)) / dx;
-
+            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1)) / dx^2) + C(i,j-1)*(sig_i)*Jv/(dx);
         else    %__Normal Cells__
             % Calculate the second derivative normally
-            Jdiff = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
+            d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
             % Apply advection term
-            Jadv = -Jkonv * (C(i, j-1) - C(i-1, j-1)) / dx;
+            dCdt_advection = -Jv * (C(i, j-1) - C(i-1, j-1)) / dx;
         end
         % Apply the diffusion-advection-(electromigration) equation
-        C(i, j) = C(i, j-1) + dt * (Jdiff + Jadv);
-        Jkonv_values(j) = Jkonv; % Plot values
-        Cuw_values(j) = Cuw;
-        AS(j) = Jkonv * dt/dx; % Stability plot values
+        C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
+        Jv_values(j) = Jv; % Plot values
+        P_values(j) = Ptot;
+        AS(j) = Jv * dt/dx; % Stability plot values
     end
 end
-%% conservation and error
+%% CONSERVATION ERROR
 
-volprc = dx*Am*1000;  % Volume per cell in Liters
+check = [0,C(domain_steps, :)];
+check(end) = [];
+Systemdiff = [0, diff(sum(C,1))]; % Diffrence in systemsums
+inflow = Jv_values*Cf*(dt/dx); % Inflow array
+outflow = check.* Jv_values*(1-sig_i)*(dt/dx); % Out-concentration array 
 
-Ciw = [0,C(domain_steps, :)]; % Making the matrix line up properly and have the right size
-Ciw(end) = [];
-
-Systemdiff = [0, diff(sum(C*volprc,1))]; % Difference in system concentration per dt
-
-inflow = Cf*(Jkonv_values)*(dt/dx)*volprc; % In - mol
-outflow = Ciw.* Jkonv_values*(dt/dx)*volprc*(1-sig_i); % Out - mol
-infoutdiff = (inflow - outflow);
-ERROR = ((Systemdiff - infoutdiff).*Systemdiff.^(-1))*100; % The mass conservation error
+ERROR = Systemdiff - (inflow - outflow); % The mass conservation error
 
 
 %% 2D Plots
@@ -114,28 +107,26 @@ ERROR = ((Systemdiff - infoutdiff).*Systemdiff.^(-1))*100; % The mass conservati
 
 figure;
 plot(t, ERROR);
-xlabel('Tid [s]');
-ylabel('Afvigelse [%]');
-title('Afvigelse Over Tid');
+xlabel('Time (seconds)');
+ylabel('Error ');
+title('Mass Conservation Error Over Time');
+grid on;
+
+
+% Plot Mass Conservation Error values over time
+
+figure;
+plot(t, outflow);
+xlabel('Time (seconds)');
+ylabel('Cp ');
+title('Cp');
 grid on;
 
 
 % Plot Percipitate (DS) values over time
 
 figure;
-plot(t, Cuw_values);
-xlabel('Tid [s]');
-ylabel('Udfældning [mol L^{-1}]');
-title('Udfældning Over Tid');
-grid on;
-ylim([0.3, 0.35]);
-
-
-
-% Plot Percipitate (DS) values over time
-
-figure;
-plot(t, Cuw_values);
+plot(t, P_values);
 xlabel('Time (seconds)');
 ylabel('percipitate ');
 title('percipitate  Over Time');
@@ -146,16 +137,16 @@ grid on;
 figure;
 plot(t, AS);
 xlabel('Time (seconds)');
-ylabel('Advection Stabilitet');
-title('Advection Stabilitet Over Tid');
+ylabel('Advection Stability');
+title('Advection Stability Over Time');
 grid on;
 
-% Plot Jkonv values over time
+% Plot Jv values over time
 figure;
-plot(t, Jkonv_values);
-xlabel('Tid [s]');
-ylabel('J_{konv} [m s^{-1}]');
-title('J_{konv} [m s^{-1}] Over Tid');
+plot(t, [0, Jv_values]);
+xlabel('Time (seconds)');
+ylabel('Jv (Velocity)');
+title('Jv (Velocity) Over Time');
 grid on;
 xlim([0, 500]);
 ylim([1.09*10^-6, 1.13*10^-6]);
