@@ -89,7 +89,7 @@ for j = 2:time_steps
         % Apply the diffusion-advection-(electromigration) equation
         C(i, j) = C(i, j-1) + dt * (Jdiff + Jadv);
         Jkonv_values(j) = Jkonv; % Plot values
-        Cuw_values(j) = Cbw; 
+        Cbw_values(j) = Cbw; 
         AS(j) = Jkonv * dt/dx; % Stability plot values
     end
 end
@@ -123,28 +123,17 @@ grid on;
 % Plot Percipitate (DS) values over time
 
 figure;
-plot(t, Cuw_values);
+plot(t, Cbw_values);
 xlabel('Tid [s]');
-ylabel('Udfældning [mol L^{-1}]');
-title('Udfældning Over Tid');
+ylabel('Bundfald [mol L^{-1}]');
+title('Bundfald Over Tid');
 grid on;
 ylim([0.3, 0.35]);
-
-
-
-% Plot Percipitate (DS) values over time
-
-figure;
-plot(t, Cuw_values);
-xlabel('Time (seconds)');
-ylabel('percipitate ');
-title('percipitate  Over Time');
-grid on;
 
 % Plot Advection Stability (DS) values over time
 
 figure;
-plot(t, AS);
+plot(t(2:end), AS(2:end));
 xlabel('Tid [s]');
 ylabel('Advection Stabilitet');
 title('Advection Stabilitet Over Tid');
@@ -152,13 +141,12 @@ grid on;
 
 % Plot Jkonv values over time
 figure;
-plot(t, Jkonv_values);
+plot(t(2:end), Jkonv_values(2:end));
 xlabel('Tid [s]');
 ylabel('J_{konv} [m s^{-1}]');
 title('J_{konv} [m s^{-1}] Over Tid');
 grid on;
 xlim([0, 500]);
-ylim([1.09*10^-6, 1.13*10^-6]);
 ax = gca;
 ax.YAxis.Exponent = -6;
 
@@ -178,11 +166,11 @@ for i = 1:length(time_instances)
     plot(x, C(:, time_index));
 end
 
-xlabel('Position (meters)');
-ylabel('Concentration');
-title('Concentration Over Time at Different Instances');
-xlim([0.0975, Lx]);
-ylim([0.1, 0.118]);
+xlabel('Position [m]');
+ylabel('Koncentration [mol L^{-1}]');
+title('Koncentration over Position ved Forskellige Tidsfraktioner');
+xlim([0.099, Lx]);
+ylim([0.1, 0.12]);
 
 % Add a legend for clarity
 legend(arrayfun(@(f) ['t=', num2str(f)], time_fraction, 'UniformOutput', false));
@@ -197,20 +185,74 @@ hold off;
 [T, X] = meshgrid(t, x);
 figure;
 h = surf(X, T, C); % Transpose removed here
-xlabel('Position (meters)');
-ylabel('Time (seconds)');
-zlabel('Concentration');
-title('Concentration Over Time and Position');
+xlabel('Position [m]');
+ylabel('Tid [s]');
+zlabel('Koncentration [mol L^{-1}]');
+title('Koncentration Over Tid og Position');
 
 % Set axis limits to start at the origin
 xlim([0, Lx]);
 ylim([0, Lt]);
-zlim([0, 0.15]); % Assuming max(C(:)) is the maximum concentration in your data
+zlim([0.1, 0.12]); % Assuming max(C(:)) is the maximum concentration in your data
 
 set(h,'LineStyle','none')
 colormap(jet)
-clim([0.1 0.115])
+clim([0.1, 0.11])
 
+%%
+load('step1jv.mat', 'Jv_values1');
+load('step2jv.mat', 'Jv_values2');
+load('step3jv.mat', 'Jv_values3');
+load('step4jv.mat', 'Jv_values4');
 
+% Remove the first value from each series
+Jv_values1 = Jv_values1(2:end);
+Jv_values2 = Jv_values2(2:end);
+Jv_values3 = Jv_values3(2:end);
+Jv_values4 = Jv_values4(2:end);
 
+%%
 
+% Create a figure for the first plot
+figure;
+hold on;
+x = linspace(0, 500, 500);
+
+plot(x(2:end), Jv_values1, 'LineWidth', 1.5);
+plot(x(2:end), Jv_values2, 'LineWidth', 1.5);
+plot(x(2:end), Jv_values3, 'LineWidth', 1.5);
+plot(x(2:end), Jv_values4, 'LineWidth', 1.5);
+
+xlabel('Time (seconds)');
+ylabel('Jv (Velocity)');
+title('Jv (Velocity) Over Time');
+grid on;
+
+legend('Step 1', 'Step 2', 'Step 3', 'Step 4');
+%% Double Y-axis Jv graph
+figure;
+
+% Plot Step 2 on the left y-axis
+yyaxis left;
+plot(x(2:end), Jv_values2, 'LineWidth', 1.5, 'LineStyle', '-'); 
+ylabel('J_{v} [m^{3} m^{-2} s^{-1}]');
+
+hold on;
+
+% Plot Step 3 on the left y-axis
+plot(x(2:end), Jv_values3, 'LineWidth', 1.5, 'LineStyle', '--');
+ylim([1.825*10^-5, 1.865*10^-5]);           % y-limit for left
+ylabel('J_{v} [m^{3} m^{-2} s^{-1}]');
+
+% Plot Step 4 on the right y-axis
+yyaxis right;
+ylim([1.2*10^-5, 1.24*10^-5]);               % y-limit for right
+
+plot(x(2:end), Jv_values4, 'LineWidth', 1.5);
+ylabel('J_{v} [m^{3} m^{-2} s^{-1}]');
+
+xlabel('Tid [s]');
+title('J_{v} Over Tid');
+grid on;
+
+legend('Step 2', 'Step 3', 'Step 4');

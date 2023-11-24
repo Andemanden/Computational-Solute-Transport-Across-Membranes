@@ -66,5 +66,3 @@ title('J_{v} Over Tid');
 grid on;
 
 legend('Step 2', 'Step 3', 'Step 4');
-
-

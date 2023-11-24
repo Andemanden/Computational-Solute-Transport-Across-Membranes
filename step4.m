@@ -133,7 +133,7 @@ ylim([0.3, 0.35]);
 % Plot Advection Stability (DS) values over time
 
 figure;
-plot(t, AS);
+plot(t(2:end), AS(2:end));
 xlabel('Time (seconds)');
 ylabel('Advection Stability');
 title('Advection Stability Over Tid');
