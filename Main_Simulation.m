@@ -21,7 +21,7 @@ k0 = 5.7311*10^(-7); % Initial water permeability [m^3 m^-2 bar^-1 s^-1]
 mu = 0.8903*10^-9; % Water viscosity [Bar∙s]
 Rm = 1/(mu*k0); % Rejection of water at the membrane (σ) [m^-1]
 alpha = 1*10^14; % Specific resistance of fouling [m L mol^-1]
-JpScalar = 0.5; %Percipitate Advection Coefficient
+JuScalar = 0.5; %Percipitate Advection Coefficient
 
 sig_i = 0.1; % Rejection of ions 
 
@@ -65,7 +65,7 @@ for j = 2:time_steps
         if j == 2
             Cuw = Udf(Cf); % The rate of percipitation
         else
-            Cuw = Udf(Ciw) + Jkonv*Udf(Cf)*(dt/dx)*JpScalar; % Advection of Percipitate
+            Cuw = Udf(Ciw) + Jkonv*Udf(Cf)*(dt/dx)*JuScalar; % Advection of Percipitate
         end
 
         Jkonv = (k(Ciw)*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv ,  in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
