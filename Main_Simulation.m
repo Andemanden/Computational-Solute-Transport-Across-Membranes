@@ -1,4 +1,12 @@
-%__Gruppe 3-Simulering-3.Sem__
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  GITHUB - ALL RIGHTS RESERVED   %%%
+%%%                                 %%%
+%%% PROPERTY OF AALBORG UNIVERSITY  %%%
+%%%         CREATED BY:             %%%
+%%%  GROUP 3 - 3RD SEMESTER- 2023   %%%
+%%%     @ANALREXIA @ANDEMANDEN      %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
 clear
 close all
 clc
@@ -41,7 +49,6 @@ t = linspace(0, Lt, time_steps);
 
 % Initial concentration array AND Initial condition
 C = zeros(domain_steps, time_steps)+0.1; % 0.1 molar [H2PO4] at pH 2.9
-
 
 % Diffusive Stability
 
@@ -164,8 +171,8 @@ end
 xlabel('Position [m]');
 ylabel('Koncentration [mol L^{-1}]');
 title('Koncentration over Position ved Forskellige Tidsfraktioner');
-xlim([0.099, Lx]);
-ylim([0.1, 0.12]);
+%xlim([0.099, Lx]);
+%ylim([0.1, 0.12]);
 legend(arrayfun(@(f) ['t=', num2str(f)], time_fraction, 'UniformOutput', false));
 
 grid on;
