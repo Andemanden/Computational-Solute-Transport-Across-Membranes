@@ -90,6 +90,9 @@ for j = 2:time_steps
         Jv_values4(j) = Jv; % Plot values
         P_values(j) = Ptot;
         AS(j) = Jv * dt/dx; % Stability plot values
+        % Main Stability
+        MainS=(1-2*DS-AS(j));                      % Calculation of specific main stability to time
+        MainS_values(j)=MainS;                     % Storing main stability values
     end
 end
 %% conservation and error
@@ -137,6 +140,15 @@ plot(t(2:end), AS(2:end));
 xlabel('Time (seconds)');
 ylabel('Advection Stability');
 title('Advection Stability Over Tid');
+grid on;
+
+% Plot Main Stability (MainS) values over time
+
+figure;
+plot(t(2:end), MainS_values(2:end));
+xlabel('Tid [s]');
+ylabel('Stability value');
+title('Main Stabilitet Over Tid');
 grid on;
 
 % Plot Jv values over time

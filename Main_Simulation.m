@@ -94,6 +94,10 @@ for j = 2:time_steps
         Jkonv_values(j) = Jkonv;                   % Storing convective flux values in respect to time
         Cbw_values(j) = Cbw;                       % Storing precipitate values in respect to time
         AS(j) = Jkonv * dt/dx;                     % Storing Stability plot values
+        % Main Stability
+        MainS=(1-2*DS-AS(j));                      % Calculation of specific main stability to time
+        MainS_values(j)=MainS;                     % Storing main stability values
+
     end
 end
 %% conservation and error
@@ -140,6 +144,15 @@ plot(t(2:end), AS(2:end));
 xlabel('Tid [s]');
 ylabel('Advection Stabilitet');
 title('Advection Stabilitet Over Tid');
+grid on;
+
+% Plot Main Stability (MainS) values over time
+
+figure;
+plot(t(2:end), MainS_values(2:end));
+xlabel('Tid [s]');
+ylabel('Stability value');
+title('Main Stabilitet Over Tid');
 grid on;
 
 % Plot Jkonv values over time
