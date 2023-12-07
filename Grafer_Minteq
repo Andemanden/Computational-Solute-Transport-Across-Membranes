@@ -95,6 +95,7 @@ p2 = plot(pH,H3PO4,linewidth = 1.5); n2 = "H_3PO_4";
 p3 = plot(pH,Prec,linewidth = 1.5); n3 = "Bundfald";
 p4 = plot(pH,Nion,linewidth = 1.5); n4 = "Andre negative ioner";
 legend([p1,p2,p3,p4], [n1,n2,n3,n4]);
+legend('location','northeast');
 
 xlabel('pH');
 ylabel('Koncentration [mol L^{-1}]');
@@ -139,22 +140,25 @@ Data1 = [0.119520000000000	0.0599391458650000
 0.185650000000000	0.949056953130000
 0.186000000000000	0.974613594270000];
 
-%assign regression equation
-x = linspace(0.115,0.18,100);
+maxP = max(H2PO4_2);
+x = linspace(0.115,maxP,100);
 Reg = 0.0011*exp(36.328*x);
+R2 = '$R^2=0,995$';
 
-%assign data columns to variables
 H2PO4_2 = Data1(:,1);
 Prec_1= Data1(:,2);
 
 %create plot and regression function figure
+
 figure; hold on
-plot(x,Reg,'--','Color',[0,0.5,1])
-    plot(H2PO4_2,Prec_1,'.','Color',[0,0.5,1],'MarkerSize',20)
-    xlabel('H2PO4- [mol L^{-1}]')
+p5 = plot(x,Reg,'--','Color',[0,0.5,1]); n5 = '$0,0011e^{36,328x} \quad R^2=0,995$';
+    plot(H2PO4_2,Prec_1,'.','Color',[0,0.5,1],'MarkerSize',20);
+    legend(n5, 'Interpreter','latex',fontsize = 13);
+    legend('location','northwest');
+    xlabel('H_2PO_4^- [mol L^{-1}]')
     ylabel('Bundfald [mol L^{-1}]')
     title('Bundfald over H_2PO_4^- koncentration')
-
 grid on
+
 
 
