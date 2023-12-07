@@ -4,7 +4,8 @@
 %%% PROPERTY OF AALBORG UNIVERSITY  %%%
 %%%         CREATED BY:             %%%
 %%%  GROUP 3 - 3RD SEMESTER- 2023   %%%
-%%%     @ANALREXIA @ANDEMANDEN      %%%
+%%%    @ANALREXIA    @ANDEMANDEN    %%%
+%%%    @BONINATOR1   @PETERPASTA11  %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 clear
