@@ -183,10 +183,10 @@ end
 
 xlabel('Position [m]');
 ylabel('Koncentration [mol L^{-1}]');
-title('Koncentration over Position ved Forskellige Tidsfraktioner');
-%xlim([0.099, Lx]);
-%ylim([0.1, 0.12]);
-legend(arrayfun(@(f) ['t=', num2str(f)], time_fraction, 'UniformOutput', false));
+title('Koncentration over Position ved Forskellige Tidspunkter');
+xlim([0.099, Lx]);
+ylim([0.1, 0.12]);
+legend(arrayfun(@(f) ['t=', num2str(f), 's'], time_instances, 'UniformOutput', false));
 
 grid on;
 hold off;
@@ -207,7 +207,7 @@ ylim([0, Lt]);
 zlim([0.1, 0.12]);
 set(h,'LineStyle','none')
 colormap(jet)
-clim([0.1, 0.11])
+clim([0.1, 0.12])
 
 
 %%
@@ -239,31 +239,31 @@ ylabel('J_{konv} [m s^{-1}]');
 title('J_{konv} [m s^{-1}] Over Tid');
 grid on;
 
-legend('Step 1', 'Step 2', 'Step 3', 'Step 4');
+legend('Advektion', 'Membran', 'Diffusion', 'Fouling');
 %% Double Y-axis Jv graph
 figure;
 
 % Plot Step 2 on the left y-axis
 yyaxis left;
 plot(x(2:end), Jv_values2, 'LineWidth', 1.5, 'LineStyle', '-'); 
-ylabel('J_{v} [m^{3} m^{-2} s^{-1}]');
+ylabel('J_{tot, v} [m^{3} m^{-2} s^{-1}]');
 
 hold on;
 
 % Plot Step 3 on the left y-axis
 plot(x(2:end), Jv_values3, 'LineWidth', 1.5, 'LineStyle', '--');
 ylim([1.825*10^-5, 1.865*10^-5]);           % y-limit for left
-ylabel('J_{v} [m^{3} m^{-2} s^{-1}]');
+ylabel('J_{tot, v} [m^{3} m^{-2} s^{-1}]');
 
 % Plot Step 4 on the right y-axis
 yyaxis right;
 ylim([1.2*10^-5, 1.24*10^-5]);               % y-limit for right
 
 plot(x(2:end), Jv_values4, 'LineWidth', 1.5);
-ylabel('J_{v} [m^{3} m^{-2} s^{-1}]');
+ylabel('J_{tot, v} [m^{3} m^{-2} s^{-1}]');
 
 xlabel('Tid [s]');
-title('J_{v} Over Tid');
+title('J_{tot, v} Over Tid');
 grid on;
 
-legend('Step 2', 'Step 3', 'Step 4');
+legend('Membran', 'Diffusion', 'Fouling');
