@@ -156,10 +156,10 @@ ax = gca;
 ax.YAxis.Exponent = -5;
 
 % Define fractions of time steps you want to visualize
-time_fraction = [0.001, 0.01, 0.1, 0.25, 0.5, 0.9];  % For example, 0.1 corresponds to 10% of time steps
+time_fraction = [0.002, 0.01, 0.1, 0.25, 0.5, 0.9];  % For example, 0.1 corresponds to 10% of time steps
 
 % Calculate the corresponding time indices
-time_instances = round(time_fraction * time_steps);
+time_instances = [1, 5, 25, 50, 100, 250, 500];
 
 % Create a figure for the first plot
 figure;
@@ -178,7 +178,7 @@ xlim([0.099, domain_length]);
 ylim([0.1, 0.12]);
 
 % Add a legend for clarity
-legend(arrayfun(@(f) ['t=', num2str(f)], time_fraction, 'UniformOutput', false));
+legend(arrayfun(@(f) ['t=', num2str(f), 's'], time_instances, 'UniformOutput', false));
 
 grid on;
 hold off;
