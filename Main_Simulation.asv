@@ -40,7 +40,7 @@ T = 273.15+25;      % Temperature [K]
 % Anonymous functions
 
 Udf = @(conc) 0.0011*exp(36.328*conc) + 0.263253; % Concentration of percipitate in respect to Ciw. [mol L^-1]
-Rf = @(conc) alpha*(Udf(conc)/Am);                % Foulingresistance [m^-1]
+Rf = @(conc) alpha*(conc/Am);                % Foulingresistance [m^-1]
 k = @(conc) 1/(mu*(Rm+Rf(conc)));                 % Water permeability dependent on mu,Rm and Rf [m^3 m^-2 bar^-1 s^-1]
 
 
@@ -64,12 +64,7 @@ end
 
 %% Time-stepping loop
 for j = 2:time_steps
-    for i = 1:domain_steps
-        Ciw = C(domain_steps, j-1); % Concentration of ions at the wall [mol L^-1]
-
-        C(1, :) = Cf; % Set the leftmost boundary to Cf [mol L^-1]
-
-        if j == 2
+    if j == 2
             Cudf = Udf(Cf); % Initial Percipitation
             Cop = 0;
             Cbw = Udf(Cf);
@@ -79,7 +74,13 @@ for j = 2:time_steps
             Jb = Jkonv*Udf(Cf)*(dt/dx)*JuScalar;
             Cop = Cop + Jb; % Total percipitate after advection [mol L^-1]
             Cbw = Cudf + Cop;
-        end
+    end
+    
+    
+    for i = 1:domain_steps
+        Ciw = C(domain_steps, j-1); % Concentration of ions at the wall [mol L^-1]
+
+        C(1, :) = Cf; % Set the leftmost boundary to Cf [mol L^-1]
 
         Jkonv = (k(Ciw)*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv , in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
 
@@ -185,14 +186,16 @@ hold on;
 
 for i = 1:length(time_instances)   % Concentration at specific time instances
     time_index = time_instances(i);
-    plot(x, C(:, time_index));
+    plot(x, C(:, time_index)/Cf - 1);
 end
 
 xlabel('Position [m]');
-ylabel('Koncentration [mol L^{-1}]');
-title('Koncentration over Position ved Forskellige Tidspunkter');
+ylabel('CF - 1');
+title('Centreret CF over Position ved Forskellige Tidspunkter');
 xlim([0.099, Lx]);
-ylim([0.1, 0.12]);
+ylim([0, 0.12]);
+
+% Add a legend for clarity
 legend(arrayfun(@(f) ['t=', num2str(f), 's'], time_instances, 'UniformOutput', false));
 
 grid on;
@@ -207,8 +210,8 @@ figure;
 h = surf(X, T, (C/Cf)-1);
 xlabel('Position [m]');
 ylabel('Tid [s]');
-zlabel('$\displaystyle \frac{C}{C_{f}} - 1$','Interpreter','latex');
-title('Koncentrations Faktor Over Tid og Position');
+zlabel('CF - 1');
+title('Centreret Koncentrations Faktor Over Tid og Position');
 xlim([0, Lx]);
 ylim([0, Lt]);
 zlim([0, 0.12]);

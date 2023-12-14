@@ -40,7 +40,7 @@ T = 273.15+25;      % Temperature [K]
 % Anonymous functions
 
 Udf = @(conc) 0.0011*exp(36.328*conc) + 0.263253; % Concentration of percipitate in respect to Ciw. [mol L^-1]
-Rf = @(conc) alpha*(Udf(conc)/Am);                % Foulingresistance [m^-1]
+Rf = @(conc) alpha*(conc/Am);                % Foulingresistance [m^-1]
 k = @(conc) 1/(mu*(Rm+Rf(conc)));                 % Water permeability dependent on mu,Rm and Rf [m^3 m^-2 bar^-1 s^-1]
 
 
@@ -76,14 +76,13 @@ for j = 2:time_steps
             Cbw = Cudf + Cop;
     end
     
+    
     for i = 1:domain_steps
         Ciw = C(domain_steps, j-1); % Concentration of ions at the wall [mol L^-1]
 
         C(1, :) = Cf; % Set the leftmost boundary to Cf [mol L^-1]
 
-        
-
-        Jkonv = (k(Ciw)*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv , in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
+        Jkonv = (k(Cbw)*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv , in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
 
         if i == 1 % First Cell (no left neighbor)
             Jdiff = 0;       % Diffusive ionflux
