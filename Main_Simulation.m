@@ -4,8 +4,6 @@
 %%% PROPERTY OF AALBORG UNIVERSITY  %%%
 %%%         CREATED BY:             %%%
 %%%  GROUP 3 - 3RD SEMESTER- 2023   %%%
-%%%    @ANALREXIA    @ANDEMANDEN    %%%
-%%%    @BONINATOR1   @PETERPASTA11  %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 clear
@@ -81,7 +79,7 @@ for j = 2:time_steps
 
         C(1, :) = Cf; % Set the leftmost boundary to Cf [mol L^-1]
 
-        Jkonv = (k(Cbw)*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv , in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
+        Jkonv = (k(Cbw)*(DeltaP-(1*R*T*(Ciw+0))));  % Volume flux = Jkonv , in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
 
         if i == 1 % First Cell (no left neighbor)
             Jdiff = 0;       % Diffusive ionflux
