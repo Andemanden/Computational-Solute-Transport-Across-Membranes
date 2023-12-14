@@ -247,30 +247,26 @@ title('J_{konv} [m s^{-1}] Over Tid');
 grid on;
 
 legend('Advektion', 'Membran', 'Diffusion', 'Fouling');
-%% Double Y-axis Jv graph
+%% Jv graph
+
+% Create a figure for the first plot
 figure;
-
-% Plot Step 2 on the left y-axis
-yyaxis left;
-plot(x(2:end), Jv_values2, 'LineWidth', 1.5, 'LineStyle', '-'); 
-ylabel('J_{tot, v} [m^{3} m^{-2} s^{-1}]');
-
 hold on;
+x = linspace(0, 500, 500);
 
-% Plot Step 3 on the left y-axis
-plot(x(2:end), Jv_values3, 'LineWidth', 1.5, 'LineStyle', '--');
-ylim([1.825*10^-5, 1.865*10^-5]);           % y-limit for left
-ylabel('J_{tot, v} [m^{3} m^{-2} s^{-1}]');
+% Subtract the last value of each series from the entire series
+Jv_values1_centered = Jv_values1 - Jv_values1(end);
+Jv_values2_centered = Jv_values2 - Jv_values2(end);
+Jv_values3_centered = Jv_values3 - Jv_values3(end);
+Jv_values4_centered = Jv_values4 - Jv_values4(end);
 
-% Plot Step 4 on the right y-axis
-yyaxis right;
-ylim([1.2*10^-5, 1.24*10^-5]);               % y-limit for right
-
-plot(x(2:end), Jv_values4, 'LineWidth', 1.5);
-ylabel('J_{tot, v} [m^{3} m^{-2} s^{-1}]');
+plot(x(2:end), Jv_values2_centered, 'LineWidth', 1.5);
+plot(x(2:end), Jv_values3_centered, 'LineWidth', 1.5);
+plot(x(2:end), Jv_values4_centered, 'LineWidth', 1.5);
 
 xlabel('Tid [s]');
-title('J_{tot, v} Over Tid');
+ylabel('J_{konv} - J_{SS} [m s^{-1}]');
+title('CentreretJ_{konv} Over Tid');
 grid on;
 
 legend('Membran', 'Diffusion', 'Fouling');

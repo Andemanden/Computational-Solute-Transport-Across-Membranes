@@ -144,7 +144,7 @@ grid on;
 ax = gca;
 ax.YAxis.Exponent = -5;
 
-% Calculate the corresponding time indices
+% Time indices
 time_instances = [1, 5, 25, 50, 100, 250, 500];
 
 figure;
@@ -179,10 +179,10 @@ ylabel('Tid [s]');
 zlabel('Koncentration [mol L^{-1}]');
 title('Koncentration Over Tid og Position');
 
-% Set axis limits to start at the origin
+% Set axis limits
 xlim([0, domain_length]);
 ylim([0, time_length]);
-zlim([0.1, 0.12]); % Assuming max(C(:)) is the maximum concentration in your data
+zlim([0, 0.12]); % Assuming max(C(:)) is the maximum concentration in your data
 
 set(h,'LineStyle','none')
 colormap(jet)

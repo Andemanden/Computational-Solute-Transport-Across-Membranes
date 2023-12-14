@@ -116,33 +116,6 @@ title('Jv (Velocity) Over Time');
 grid on;
 
 
-% Define fractions of time steps you want to visualize
-time_fraction = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];  % For example, 0.1 corresponds to 10% of time steps
-
-% Calculate the corresponding time indices
-time_instances = round(time_fraction * time_steps);
-
-% Create a figure for the first plot
-figure;
-hold on;
-
-% Plot concentration at specific time instances
-for i = 1:length(time_instances)
-    time_index = time_instances(i);
-    plot(x, C(:, time_index));
-end
-
-xlabel('Position (meters)');
-ylabel('Concentration');
-title('Concentration Over Time at Different Instances');
-
-% Add a legend for clarity
-legend(arrayfun(@(f) ['t=', num2str(f)], time_fraction, 'UniformOutput', false));
-
-grid on;
-hold off;
-
-
 %% 3D Plot
 
 % Create a 3D surface plot to visualize concentration over time and position
