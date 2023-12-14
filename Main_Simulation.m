@@ -64,12 +64,7 @@ end
 
 %% Time-stepping loop
 for j = 2:time_steps
-    for i = 1:domain_steps
-        Ciw = C(domain_steps, j-1); % Concentration of ions at the wall [mol L^-1]
-
-        C(1, :) = Cf; % Set the leftmost boundary to Cf [mol L^-1]
-
-        if j == 2
+    if j == 2
             Cudf = Udf(Cf); % Initial Percipitation
             Cop = 0;
             Cbw = Udf(Cf);
@@ -79,7 +74,14 @@ for j = 2:time_steps
             Jb = Jkonv*Udf(Cf)*(dt/dx)*JuScalar;
             Cop = Cop + Jb; % Total percipitate after advection [mol L^-1]
             Cbw = Cudf + Cop;
-        end
+    end
+    
+    for i = 1:domain_steps
+        Ciw = C(domain_steps, j-1); % Concentration of ions at the wall [mol L^-1]
+
+        C(1, :) = Cf; % Set the leftmost boundary to Cf [mol L^-1]
+
+        
 
         Jkonv = (k(Ciw)*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv , in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
 
@@ -191,7 +193,7 @@ end
 xlabel('Position [m]');
 ylabel('CF - 1');
 title('Centreret CF over Position ved Forskellige Tidspunkter');
-xlim([0.099, domain_length]);
+xlim([0.099, Lx]);
 ylim([0, 0.12]);
 
 % Add a legend for clarity
