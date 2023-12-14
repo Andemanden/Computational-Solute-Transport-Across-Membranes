@@ -159,7 +159,9 @@ ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
 grid on;
 
-% Sideplot
+%% Sideplot
+
+% Time indices
 time_instances = [1, 5, 25, 50, 100, 250, 500];
 
 figure;
@@ -168,14 +170,14 @@ hold on;
 % Plot concentration at specific time instances
 for i = 1:length(time_instances)
     time_index = time_instances(i);
-    plot(x, C(:, time_index));
+    plot(x, C(:, time_index)/feed_conc - 1);
 end
 
 xlabel('Position [m]');
-ylabel('Koncentration [mol L^{-1}]');
-title('Koncentration over Position ved Forskellige Tidsfraktioner');
+ylabel('CF - 1');
+title('Centreret CF over Position ved Forskellige Tidspunkter');
 xlim([0.099, domain_length]);
-ylim([0.1, 0.12]);
+ylim([0, 0.12]);
 
 % Add a legend for clarity
 legend(arrayfun(@(f) ['t=', num2str(f), 's'], time_instances, 'UniformOutput', false));
@@ -183,26 +185,22 @@ legend(arrayfun(@(f) ['t=', num2str(f), 's'], time_instances, 'UniformOutput', f
 grid on;
 hold off;
 
-
 %% 3D Plot
 
-% Create a 3D surface plot to visualize concentration over time and position
+% 3D surface plot - concentration over time and position
 [T, X] = meshgrid(t, x);
 figure;
-h = surf(X, T, C); % Transpose removed here
+h = surf(X, T, (C/feed_conc)-1);
 xlabel('Position [m]');
 ylabel('Tid [s]');
-zlabel('Koncentration [mol L^{-1}]');
-title('Koncentration Over Tid og Position');
-
-% Set axis limits to start at the origin
+zlabel('CF - 1');
+title('Centreret Koncentrations Faktor Over Tid og Position');
 xlim([0, domain_length]);
 ylim([0, time_length]);
-zlim([0.1, 0.12]); % Assuming max(C(:)) is the maximum concentration in your data
-
+zlim([0, 0.12]);
 set(h,'LineStyle','none')
 colormap(jet)
-clim([0.1, 0.11])
+clim([0, 0.12])
 
 
 %%

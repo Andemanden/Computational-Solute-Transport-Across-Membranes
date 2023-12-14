@@ -118,23 +118,20 @@ grid on;
 
 %% 3D Plot
 
-% Create a 3D surface plot to visualize concentration over time and position
+% 3D surface plot - concentration over time and position
 [T, X] = meshgrid(t, x);
 figure;
-h = surf(X, T, C); % Transpose removed here
+h = surf(X, T, (C/feed_conc)-1);
 xlabel('Position [m]');
 ylabel('Tid [s]');
-zlabel('Koncentration [mol L^{-1}]');
-title('Koncentration Over Tid og Position');
-
-% Set axis limits to start at the origin
+zlabel('CF - 1');
+title('Centreret Koncentrations Faktor Over Tid og Position');
 xlim([0, domain_length]);
 ylim([0, time_length]);
-zlim([0.1, 0.12]); % Assuming max(C(:)) is the maximum concentration in your data
-
+zlim([0, 0.12]);
 set(h,'LineStyle','none')
 colormap(jet)
-clim([0.1 0.12])
+clim([0, 0.12])
 
 %%
 save('step2jv', 'Jv_values2')

@@ -185,16 +185,14 @@ hold on;
 
 for i = 1:length(time_instances)   % Concentration at specific time instances
     time_index = time_instances(i);
-    plot(x, C(:, time_index)/Cf - 1);
+    plot(x, C(:, time_index));
 end
 
 xlabel('Position [m]');
-ylabel('CF - 1');
-title('Centreret CF over Position ved Forskellige Tidspunkter');
-xlim([0.099, domain_length]);
-ylim([0, 0.12]);
-
-% Add a legend for clarity
+ylabel('Koncentration [mol L^{-1}]');
+title('Koncentration over Position ved Forskellige Tidspunkter');
+xlim([0.099, Lx]);
+ylim([0.1, 0.12]);
 legend(arrayfun(@(f) ['t=', num2str(f), 's'], time_instances, 'UniformOutput', false));
 
 grid on;
@@ -209,8 +207,8 @@ figure;
 h = surf(X, T, (C/Cf)-1);
 xlabel('Position [m]');
 ylabel('Tid [s]');
-zlabel('CF - 1');
-title('Centreret Koncentrations Faktor Over Tid og Position');
+zlabel('$\displaystyle \frac{C}{C_{f}} - 1$','Interpreter','latex');
+title('Koncentrations Faktor Over Tid og Position');
 xlim([0, Lx]);
 ylim([0, Lt]);
 zlim([0, 0.12]);
