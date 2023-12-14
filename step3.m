@@ -108,17 +108,6 @@ ERROR = ((Systemdiff - infoutdiff).*Systemdiff.^(-1))*100; % The mass conservati
 % Plot Mass Conservation Error values over time
 
 figure;
-plot(t, outflow);
-xlabel('Time (seconds)');
-ylabel('Cp ');
-title('Cp');
-grid on;
-
-
-
-% Plot Mass Conservation Error values over time
-
-figure;
 plot(t, ERROR);
 xlabel('Time (seconds)');
 ylabel('Error ');
@@ -155,13 +144,9 @@ grid on;
 ax = gca;
 ax.YAxis.Exponent = -5;
 
-% Define fractions of time steps you want to visualize
-time_fraction = [0.002, 0.01, 0.1, 0.25, 0.5, 0.9];  % For example, 0.1 corresponds to 10% of time steps
-
 % Calculate the corresponding time indices
 time_instances = [1, 5, 25, 50, 100, 250, 500];
 
-% Create a figure for the first plot
 figure;
 hold on;
 
@@ -173,7 +158,7 @@ end
 
 xlabel('Position [m]');
 ylabel('Koncentration [mol L^{-1}]');
-title('Koncentration over Position ved Forskellige Tidsfraktioner');
+title('Koncentration over Position ved Forskellige Tidspunkter');
 xlim([0.099, domain_length]);
 ylim([0.1, 0.12]);
 
@@ -182,7 +167,6 @@ legend(arrayfun(@(f) ['t=', num2str(f), 's'], time_instances, 'UniformOutput', f
 
 grid on;
 hold off;
-
 
 %% 3D Plot
 

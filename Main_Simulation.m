@@ -70,9 +70,15 @@ for j = 2:time_steps
         C(1, :) = Cf; % Set the leftmost boundary to Cf [mol L^-1]
 
         if j == 2
-            Cbw = Udf(Cf); % Initial Percipitation
+            Cudf = Udf(Cf); % Initial Percipitation
+            Cop = 0;
+            Cbw = Udf(Cf);
+            Jb = 0;
         else
-            Cbw = Udf(Ciw) + Jkonv*Udf(Cf)*(dt/dx)*JuScalar; % Total percipitate after advection [mol L^-1]
+            Cudf = Udf(Ciw);
+            Jb = Jkonv*Udf(Cf)*(dt/dx)*JuScalar;
+            Cop = Cop + Jb; % Total percipitate after advection [mol L^-1]
+            Cbw = Cudf + Cop;
         end
 
         Jkonv = (k(Ciw)*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv , in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
@@ -136,7 +142,7 @@ xlabel('Tid [s]');
 ylabel('Bundfald [mol L^{-1}]');
 title('Bundfald Over Tid');
 grid on;
-ylim([0.3, 0.35]);
+%ylim([0.3, 0.35]);
 
 % Plot Advection Stability (DS) values over time
 

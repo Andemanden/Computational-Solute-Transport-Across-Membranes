@@ -158,18 +158,10 @@ xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
 grid on;
-%ylim([1.185*10^-5, 1.245*10^-5]);
-ax = gca;
-ax.YAxis.Exponent = -5;
 
-
-% Define fractions of time steps you want to visualize
-time_fraction = [0.002, 0.01, 0.1, 0.25, 0.5, 0.9];  % For example, 0.1 corresponds to 10% of time steps
-
-% Calculate the corresponding time indices
+% Sideplot
 time_instances = [1, 5, 25, 50, 100, 250, 500];
 
-% Create a figure for the first plot
 figure;
 hold on;
 
