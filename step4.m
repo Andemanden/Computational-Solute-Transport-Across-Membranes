@@ -122,17 +122,6 @@ ylabel('Afvigelse [%]');
 title('Afvigelse Over Tid');
 grid on;
 
-
-% Plot Percipitate (DS) values over time
-
-figure;
-plot(t, P_values);
-xlabel('Tid [s]');
-ylabel('Udfældning [mol L^{-1}] ');
-title('Udfældning Over Tid');
-grid on;
-ylim([0.3, 0.35]);
-
 % Plot Advection Stability (DS) values over time
 
 figure;
@@ -149,6 +138,15 @@ plot(t(2:end), MainS_values(2:end));
 xlabel('Tid [s]');
 ylabel('Stability value');
 title('Main Stabilitet Over Tid');
+grid on;
+
+% Plot Percipitate (DS) values over time
+
+figure;
+plot(t, Ptot*volprc/area);
+xlabel('Tid [s]');
+ylabel('\omega [mol m^{-2}]');
+title('\omega over tid');
 grid on;
 
 % Plot Jv values over time
@@ -174,8 +172,8 @@ for i = 1:length(time_instances)
 end
 
 xlabel('Position [m]');
-ylabel('CF - 1');
-title('Centreret CF over Position ved Forskellige Tidspunkter');
+ylabel('CF');
+title('CF over position ved forskellige tidspunkter');
 xlim([0.099, domain_length]);
 ylim([0, 0.12]);
 
@@ -193,8 +191,8 @@ figure;
 h = surf(X, T, (C/feed_conc)-1);
 xlabel('Position [m]');
 ylabel('Tid [s]');
-zlabel('CF - 1');
-title('Centreret Koncentrations Faktor Over Tid og Position');
+zlabel('CF');
+title('CF over tid og position');
 xlim([0, domain_length]);
 ylim([0, time_length]);
 zlim([0, 0.12]);

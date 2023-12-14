@@ -28,7 +28,7 @@ Am = 0.0308;          % Surfacearea of the membrane [m^2]
 k0 = 5.7311*10^-7;    % Initial water permeability [m^3 m^-2 bar^-1 s^-1] 
 mu = 0.8903*10^-9;    % Viscosity of water [bar∙s]
 Rm = 1/(mu*k0);       % Membraneresitance of water [m^-1]
-alpha = 1*10^14;      % Specific fouling resistance [m · kg-1] or [m L mol^-1]
+alpha = 1*10^14;      % Specific fouling resistance [m · kg-1] or [m mol^-1]
 JuScalar = 0.5;       % Percipitate Advection Coefficient
 sig_i = 0.1;          % Rejection of ions 
 
@@ -134,17 +134,6 @@ ylabel('Afvigelse [%]');
 title('Afvigelse Over Tid');
 grid on;
 
-
-% Plot Percipitate (DS) values over time
-
-figure;
-plot(t, Cbw_values);
-xlabel('Tid [s]');
-ylabel('Bundfald [mol L^{-1}]');
-title('Bundfald Over Tid');
-grid on;
-%ylim([0.3, 0.35]);
-
 % Plot Advection Stability (DS) values over time
 
 figure;
@@ -163,16 +152,15 @@ ylabel('Stability value');
 title('Main Stabilitet Over Tid');
 grid on;
 
-% Plot Jkonv values over time
+% Plot Percipitate (DS) values over time
+
 figure;
-plot(t(2:end), Jkonv_values(2:end));
+plot(t, Cbw_values*volprc/Am);
 xlabel('Tid [s]');
-ylabel('J_{konv} [m s^{-1}]');
-title('J_{konv} [m s^{-1}] Over Tid');
+ylabel('\omega [mol m^{-2}]');
+title('\omega over tid');
 grid on;
-xlim([0, 500]);
-ax = gca;
-ax.YAxis.Exponent = -6;
+
 
 % Define fractions of time steps you want to visualize
 time_fraction = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];  % For example, 0.1 corresponds to 10% of time steps
@@ -190,8 +178,8 @@ for i = 1:length(time_instances)   % Concentration at specific time instances
 end
 
 xlabel('Position [m]');
-ylabel('CF - 1');
-title('Centreret CF over Position ved Forskellige Tidspunkter');
+ylabel('CF');
+title('CF over position ved forskellige tidspunkter');
 xlim([0.099, Lx]);
 ylim([0, 0.12]);
 
@@ -210,8 +198,8 @@ figure;
 h = surf(X, T, (C/Cf)-1);
 xlabel('Position [m]');
 ylabel('Tid [s]');
-zlabel('CF - 1');
-title('Centreret Koncentrations Faktor Over Tid og Position');
+zlabel('CF');
+title('CF over tid og position');
 xlim([0, Lx]);
 ylim([0, Lt]);
 zlim([0, 0.12]);
@@ -245,8 +233,8 @@ plot(x(2:end), Jv_values3, 'LineWidth', 1.5);
 plot(x(2:end), Jv_values4, 'LineWidth', 1.5);
 
 xlabel('Tid [s]');
-ylabel('J_{konv} [m s^{-1}]');
-title('J_{konv} [m s^{-1}] Over Tid');
+ylabel('J_{tot, v} [m s^{-1}]');
+title('J_{tot, v} [m s^{-1}] Over Tid');
 grid on;
 
 legend('Advektion', 'Membran', 'Diffusion', 'Fouling');
@@ -267,8 +255,8 @@ plot(x(2:end), Jv_values3_centered, 'LineWidth', 1.5);
 plot(x(2:end), Jv_values4_centered, 'LineWidth', 1.5);
 
 xlabel('Tid [s]');
-ylabel('J_{konv} - J_{SS} [m^{3} m^{-2} s^{-1}]');
-title('Centreret J_{konv} Over Tid');
+ylabel('J_{tot, v} - J_{SS} [m^{3} m^{-2} s^{-1}]');
+title('Relativ J_{tot, v} over tid');
 grid on;
 
 legend('Membran', 'Diffusion', 'Fouling');

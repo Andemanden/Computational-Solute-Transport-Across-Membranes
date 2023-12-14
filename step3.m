@@ -157,8 +157,8 @@ for i = 1:length(time_instances)
 end
 
 xlabel('Position [m]');
-ylabel('CF - 1');
-title('Centreret CF over Position ved Forskellige Tidspunkter');
+ylabel('CF');
+title('CF over position ved forskellige tidspunkter');
 xlim([0.099, domain_length]);
 ylim([0, 0.12]);
 
@@ -176,8 +176,8 @@ figure;
 h = surf(X, T, (C/feed_conc)-1);
 xlabel('Position [m]');
 ylabel('Tid [s]');
-zlabel('CF - 1');
-title('Centreret Koncentrations Faktor Over Tid og Position');
+zlabel('CF');
+title('CF over tid og position');
 xlim([0, domain_length]);
 ylim([0, time_length]);
 zlim([0, 0.12]);
