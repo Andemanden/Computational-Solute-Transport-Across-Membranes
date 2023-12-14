@@ -141,8 +141,6 @@ xlabel('Time (seconds)');
 ylabel('Jv (Velocity)');
 title('Jv (Velocity) Over Time');
 grid on;
-ax = gca;
-ax.YAxis.Exponent = -5;
 
 % Time indices
 time_instances = [1, 5, 25, 50, 100, 250, 500];
@@ -159,12 +157,12 @@ end
 xlabel('Position [m]');
 ylabel('CF');
 title('CF over position ved forskellige tidspunkter');
-xlim([0.099, domain_length]);
+xlim([0.097, domain_length]);
 ylim([0, 0.12]);
 
 % Add a legend for clarity
 legend(arrayfun(@(f) ['t=', num2str(f), 's'], time_instances, 'UniformOutput', false));
-
+legend('Location','northwest')
 grid on;
 hold off;
 
