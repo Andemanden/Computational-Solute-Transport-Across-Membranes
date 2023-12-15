@@ -28,7 +28,8 @@ mu = 0.8903*10^-9;    % Viscosity of water [bar∙s]
 Rm = 1/(mu*k0);       % Membraneresitance of water [m^-1]
 alpha = 1*10^16;      % Specific fouling resistance [m · kg-1] or [m mol^-1]
 JuScalar = 0.5;       % Percipitate Advection Coefficient
-sig_i = 0.1;          % Rejection of ions 
+sig_i = 0.1;          % Rejection of ions
+sig_b = 1;
 volprc = dx*Am*1000;  % Volume per cell in Liters
 
 % PHYSICAL CONSTANTS
