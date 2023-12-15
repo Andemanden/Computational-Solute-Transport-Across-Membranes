@@ -202,7 +202,7 @@ colormap(jet)
 clim([0, 0.12])
 
 
-%%
+%% LOAD PREVIOUS Jv VALUES FROM PREVIOUS SIM. !!! MAKE SURE TO RUN ALL OTHER SCRIPTS BEFORE THIS ONE.
 load('step1jv.mat', 'Jv_values1');
 load('step2jv.mat', 'Jv_values2');
 load('step3jv.mat', 'Jv_values3');
@@ -214,27 +214,8 @@ Jv_values2 = Jv_values2(2:end);
 Jv_values3 = Jv_values3(2:end);
 Jv_values4 = Jv_values4(2:end);
 
-%% Jv graph
+%% Jv graph for Membrane and Diffusion sim
 
-% Create a figure for the first plot
-figure;
-hold on;
-x = linspace(0, 500, 500);
-
-plot(x(2:end), Jv_values1, 'LineWidth', 1.5);
-plot(x(2:end), Jv_values2, 'LineWidth', 1.5);
-plot(x(2:end), Jv_values3, 'LineWidth', 1.5);
-plot(x(2:end), Jv_values4, 'LineWidth', 1.5);
-
-xlabel('Tid [s]');
-ylabel('J_{tot, v} [m s^{-1}]');
-title('J_{tot, v} [m s^{-1}] Over Tid');
-grid on;
-
-legend('Membran', 'Diffusion');
-%% Jv graph
-
-% Create a figure for the first plot
 figure;
 hold on;
 x = linspace(0, 500, 500);
@@ -253,13 +234,13 @@ title('Relativ J_{tot, v} over tid');
 grid on;
 ax = gca;
 ax.YAxis.Exponent = -7;
-
 legend('Membran', 'Diffusion');
-%%
+
+hold off
+
+% Jv graph for Fouling sim
 
 figure;
-hold on;
-x = linspace(0, 500, 500);
 plot(x(2:end), Jv_values4_centered, 'LineWidth', 1.5);
 
 xlabel('Tid [s]');
@@ -270,4 +251,3 @@ ax = gca;
 ax.YAxis.Exponent = -7;
 
 legend('Fouling');
-

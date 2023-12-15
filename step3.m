@@ -1,50 +1,59 @@
-%__Gruppe 3-Simulering-3.Sem__
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%  GITHUB - ALL RIGHTS RESERVED   %%%
+%%%                                 %%%
+%%% PROPERTY OF AALBORG UNIVERSITY  %%%
+%%%         CREATED BY:             %%%
+%%%  GROUP 3 - 3RD SEMESTER- 2023   %%%
+%%%    @ANALREXIA    @ANDEMANDEN    %%%
+%%%    @BONINATOR1   @PETERPASTA11  %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
 clear
 close all
 clc
 %% Inital Parameters
-domain_length = 0.1;   % Domain length (meters)
-domain_steps = 1000;    % Number of spatial domain_steps points
-dx = domain_length / (domain_steps - 1); % Position discretization
+Lx = 0.1;                     % Domain length [m]
+domain_steps = 1000;          % Number of spatial domain steps
+dx = Lx / (domain_steps - 1); % Position discretization [m]
  
-time_length = 500;      % Time length (seconds)
-time_steps = 500;       % Number of time steps
-dt = time_length / time_steps; % Temporal discretization
+Lt = 500;              % Time length [s]
+time_steps = 500;      % Number of time steps
+dt = Lt / time_steps;  % Temporal discretization [s]
 
 % DEFINED VARIABLES
-D = 1.464*10^-9; % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
-feed_conc = 0.1; % Constant solute concentration at the first cell 0.1 molar [H2PO4-]
-TMP = 35; %TMP: Transmembrane Pressure [bar]
-
-area = 0.0308; % Area of the membrane surface [m^2]
-kw = 5.7311*10^(-7); % Initial water permeability m^3 m^-2 bar^-1 s^-1 
-my = 0.8903*10^-9; % Water viscosity [Bar∙s]
-Rm = 1/(my*kw); % Rejection of water at the membrane (σ) [m^-1]
-PC = 0.5; %Percipitate Advection Coefficient
-
-sig_m = 0.1; % Rejection of ions 
+D = 1.464*10^-9;      % Diffusivity coefficient H2PO4- in water [m^2 s^-1]
+Cf = 0.1;             % Ionconcentration of the feed [mol L^-1]
+DeltaP = 35;          % Change in outer pressure [bar]
+Am = 0.0308;          % Surfacearea of the membrane [m^2]
+k0 = 5.7311*10^-7;    % Initial water permeability [m^3 m^-2 bar^-1 s^-1] 
+mu = 0.8903*10^-9;    % Viscosity of water [bar∙s]
+Rm = 1/(mu*k0);       % Membraneresitance of water [m^-1]
+alpha = 1*10^16;      % Specific fouling resistance [m · kg-1] or [m mol^-1]
+JuScalar = 0.5;       % Percipitate Advection Coefficient
+sig_i = 0.1;          % Rejection of ions 
+volprc = dx*Am*1000;  % Volume per cell in Liters
 
 % PHYSICAL CONSTANTS
-R= 8.31415*10^-2; % Gasconstant [L^3 Bar mol^-1 K^-1]
-T= 273.15+25; %Temperature [K]
+
+R = 8.31415*10^-2;  % Gasconstant [L Bar mol^-1 K^-1]
+T = 273.15+25;      % Temperature [K]
  
 % Anonymous functions
-%Lv = @(time) kw*exp(-kb*time); %Water permeability dependent on Fouling
 
-Mp = @(conc) 0.0011*exp(36.328*conc) + 0.263253; % concentration of udfæld in respect to phosphate increase.
-Rf = @(conc) alpha*(Mp(conc)/area); % Rate of fouling
-Lv = @(conc) 1/(my*(Rm+Rf(conc))); % Water permeability dependent on fouling
+Udf = @(conc) 0.0011*exp(36.328*conc) + 0.263253; % Concentration of percipitate in respect to Ciw. [mol L^-1]
+Rf = @(conc) alpha*(conc*volprc/Am);                % Foulingresistance [m^-1]
+k = @(conc) 1/(mu*(Rm+Rf(conc)));                 % Water permeability dependent on mu,Rm and Rf [m^3 m^-2 bar^-1 s^-1]
 
 
-% Create a grid for space and time
-x = linspace(0, domain_length, domain_steps);
-t = linspace(0, time_length, time_steps);
+% Space and Time Grid
+x = linspace(0, Lx, domain_steps);
+t = linspace(0, Lt, time_steps);
 
-% Initialize the concentration array AND Initial condition (1D)
+% Initial concentration array AND Initial condition
 C = zeros(domain_steps, time_steps)+0.1; % 0.1 molar [H2PO4] at pH 2.9
 
+% Diffusive Stability
 
-%Diffusive Stability
 DS = D*dt/dx^2;
 fprintf('\n Diffusivity Stability = %f', DS);
 if DS>0.5 
@@ -56,34 +65,42 @@ end
 
 %% Time-stepping loop
 for j = 2:time_steps
+    if j == 2
+            Cudf = Udf(Cf); % Initial Percipitation
+            Cop = 0;
+            Cbw = Udf(Cf);
+            Jb = 0;
+        else
+            Cudf = Udf(Ciw);
+            Jb = Jkonv*Udf(Cf)*(dt/dx)*JuScalar;
+            Cop = Cop + Jb; % Total percipitate after advection [mol L^-1]
+            Cbw = Cudf + Cop;
+    end    
     for i = 1:domain_steps
-        LastC = C(domain_steps, j-1);
+        Ciw = C(domain_steps, j-1); % Concentration of ions at the wall [mol L^-1]
 
-        C(1, :) = feed_conc; % Set the leftmost boundary to 0.1
+        C(1, :) = Cf; % Set the leftmost boundary to Cf [mol L^-1]
 
-        Jv = (kw*(TMP-(1*R*T*(LastC))));  % Volume flux = Jv ,  in terms of osmotic pressure (TMP, R, T, delta_C) and Lv. [m/s]
+        Jkonv = (k0*(DeltaP-(1*R*T*(Ciw))));  % Volume flux = Jkonv , in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
 
-        % Calculate the second derivative in x direction
-        if i == 1 %_Left Cell__
-            d2Cdx2 = 0;
-            dCdt_advection = 0;
-        
-        elseif i == domain_steps %__Membrane Cell___
-            % No right neighbor at the last cell and MEMBRANE
-            d2Cdx2 = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1))) / dx^2;
-            dCdt_advection = -Jv * (C(domain_steps, j-1)*(1-sig_m) - C(domain_steps - 1, j-1)) / dx;
+        if i == 1 % First Cell (no left neighbor)
+            Jdiff = 0;       % Diffusive ionflux
+            Jadv = 0;        % Advective flux
 
-        else    %__Normal Cells__
+        elseif i == domain_steps % Membrane wall cell (no right neighbor)
+            Jdiff = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1))) / dx^2;           % Diffusive ionflux [mol · m-2 · s-1]
+            Jadv = -Jkonv * (C(domain_steps, j-1)*(1-sig_i) - C(domain_steps - 1, j-1)) / dx; % Advective flux [mol · m-2 · s-1]
+
+        else    % Bulk Cells
             % Calculate the second derivative normally
-            d2Cdx2 = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2;
-            % Apply advection term
-            dCdt_advection = -Jv * (C(i, j-1) - C(i-1, j-1)) / dx;
+            Jdiff = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2; % Diffusive ionflux at the membrane wall [mol · m-2 · s-1]
+            Jadv = -Jkonv * (C(i, j-1) - C(i-1, j-1)) / dx;                     % Advective flux at the membrane wall [mol · m-2 · s-1]
         end
-        % Apply the diffusion-advection-(electromigration) equation
-        C(i, j) = C(i, j-1) + dt * (d2Cdx2 + dCdt_advection);
-        Jv_values3(j) = Jv; % Plot values
-        AS(j) = Jv * dt/dx; % Stability plot values
-
+        % Apply the diffusion-advection equation
+        C(i, j) = C(i, j-1) + dt * (Jdiff + Jadv); % Apply the diffusion-advection equation [mol L^-1]
+        Jv_values3(j) = Jkonv;                   % Storing convective flux values in respect to time
+        Cbw_values(j) = Cbw;                       % Storing precipitate values in respect to time
+        AS(j) = Jkonv * dt/dx;                     % Storing Stability plot values
         % Main Stability
         MainS=(1-2*DS-AS(j));                      % Calculation of specific main stability to time
         MainS_values(j)=MainS;                     % Storing main stability values
@@ -91,17 +108,16 @@ for j = 2:time_steps
 end
 %% conservation and error
 
-volprc = dx*area*1000;  % Volume per cell in Liters
-
-Cw = [0,C(domain_steps, :)]; % Making the matrix line up properly and have the right size
-Cw(end) = [];
+Ciw = [0,C(domain_steps, :)]; % Making the matrix line up properly and have the right size
+Ciw(end) = [];
 
 Systemdiff = [0, diff(sum(C*volprc,1))]; % Difference in system concentration per dt
 
-inflow = feed_conc*(Jv_values3)*(dt/dx)*volprc; % In - mol
-outflow = Cw.* Jv_values3*(dt/dx)*volprc*(1-sig_m); % Out - mol
-infoutdiff = (inflow - outflow);
-ERROR = ((Systemdiff - infoutdiff).*Systemdiff.^(-1))*100; % The mass conservation error
+inflow = Cf*(Jv_values3)*(dt/dx)*volprc;                 % Input [mol]
+outflow = Ciw.* Jv_values3*(dt/dx)*volprc*(1-sig_i);     % Output [mol]
+infoutdiff = (inflow - outflow);                           % Difference in input and output
+ERROR = ((Systemdiff - infoutdiff).*Systemdiff.^(-1))*100; % Mass conservation error
+
 
 %% 2D Plots
 
@@ -109,20 +125,19 @@ ERROR = ((Systemdiff - infoutdiff).*Systemdiff.^(-1))*100; % The mass conservati
 
 figure;
 plot(t, ERROR);
-xlabel('Time (seconds)');
-ylabel('Error ');
-title('Mass Conservation Error Over Time');
+xlabel('Tid [s]');
+ylabel('Afvigelse [%]');
+title('Afvigelse Over Tid');
 grid on;
 
 % Plot Advection Stability (DS) values over time
 
 figure;
-plot(t, AS);
-xlabel('Time (seconds)');
-ylabel('Advection Stability');
-title('Advection Stability Over Time');
+plot(t(2:end), AS(2:end));
+xlabel('Tid [s]');
+ylabel('Advection Stabilitet');
+title('Advection Stabilitet Over Tid');
 grid on;
-
 
 % Plot Main Stability (MainS) values over time
 
@@ -132,7 +147,6 @@ xlabel('Tid [s]');
 ylabel('Stability value');
 title('Main Stabilitet Over Tid');
 grid on;
-
 
 % Plot Jv values over time
 figure;
@@ -151,13 +165,13 @@ hold on;
 % Plot concentration at specific time instances
 for i = 1:length(time_instances)
     time_index = time_instances(i);
-    plot(x, C(:, time_index)/feed_conc - 1);
+    plot(x, C(:, time_index)/Cf - 1);
 end
 
 xlabel('Position [m]');
 ylabel('CF');
 title('CF over position ved forskellige tidspunkter');
-xlim([0.097, domain_length]);
+xlim([0.097, Lx]);
 ylim([0, 0.12]);
 
 % Add a legend for clarity
@@ -171,21 +185,17 @@ hold off;
 % 3D surface plot - concentration over time and position
 [T, X] = meshgrid(t, x);
 figure;
-h = surf(X, T, (C/feed_conc)-1);
+h = surf(X, T, (C/Cf)-1);
 xlabel('Position [m]');
 ylabel('Tid [s]');
 zlabel('CF');
 title('CF over tid og position');
-xlim([0, domain_length]);
-ylim([0, time_length]);
+xlim([0, Lx]);
+ylim([0, Lt]);
 zlim([0, 0.12]);
 set(h,'LineStyle','none')
 colormap(jet)
 clim([0, 0.12])
 
-
 %%
 save('step3jv', 'Jv_values3')
-
-
-
