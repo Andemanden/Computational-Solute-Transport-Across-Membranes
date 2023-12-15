@@ -70,7 +70,7 @@ for j = 2:time_steps
             Jb = 0;
         else
             Cudf = Udf(Ciw);
-            Jb = Jkonv*Udf(Cf)*(dt/dx)*JuScalar;
+            Jb = -Jtotv*JuScalar*((Udf(Cf)*(1-sig_b))-(Udf(Cf)*(dt/dx)));
             Cop = Cop + Jb; % Total percipitate after advection [mol L^-1]
             Cbw = Cudf + Cop;
     end
@@ -79,7 +79,7 @@ for j = 2:time_steps
 
         C(1, :) = Cf; % Set the leftmost boundary to Cf [mol L^-1]
 
-        Jkonv = (k(Cbw)*(DeltaP-(1*R*T*(Ciw+0))));  % Volume flux = Jkonv , in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
+        Jtotv = (k(Cbw)*(DeltaP-(1*R*T*(Ciw+0))));  % Volume flux = Jtotv , in terms of osmotic pressure (DeltaP, R, T, C_(i_w)) and k. [m/s]
 
         if i == 1 % First Cell (no left neighbor)
             Jdiff = 0;       % Diffusive ionflux
@@ -87,18 +87,18 @@ for j = 2:time_steps
 
         elseif i == domain_steps % Membrane wall cell (no right neighbor)
             Jdiff = (D * (C(domain_steps - 1, j-1) - C(domain_steps, j-1))) / dx^2;           % Diffusive ionflux [mol · m-2 · s-1]
-            Jadv = -Jkonv * (C(domain_steps, j-1)*(1-sig_i) - C(domain_steps - 1, j-1)) / dx; % Advective flux [mol · m-2 · s-1]
+            Jadv = -Jtotv * (C(domain_steps, j-1)*(1-sig_i) - C(domain_steps - 1, j-1)) / dx; % Advective flux [mol · m-2 · s-1]
 
         else    % Bulk Cells
             % Calculate the second derivative normally
             Jdiff = D * (C(i + 1, j-1) - 2 * C(i, j-1) + C(i - 1, j-1)) / dx^2; % Diffusive ionflux at the membrane wall [mol · m-2 · s-1]
-            Jadv = -Jkonv * (C(i, j-1) - C(i-1, j-1)) / dx;                     % Advective flux at the membrane wall [mol · m-2 · s-1]
+            Jadv = -Jtotv * (C(i, j-1) - C(i-1, j-1)) / dx;                     % Advective flux at the membrane wall [mol · m-2 · s-1]
         end
         % Apply the diffusion-advection equation
         C(i, j) = C(i, j-1) + dt * (Jdiff + Jadv); % Apply the diffusion-advection equation [mol L^-1]
-        Jkonv_values(j) = Jkonv;                   % Storing convective flux values in respect to time
+        Jtotv_values(j) = Jtotv;                   % Storing convective flux values in respect to time
         Cbw_values(j) = Cbw;                       % Storing precipitate values in respect to time
-        AS(j) = Jkonv * dt/dx;                     % Storing Stability plot values
+        AS(j) = Jtotv * dt/dx;                     % Storing Stability plot values
         % Main Stability
         MainS=(1-2*DS-AS(j));                      % Calculation of specific main stability to time
         MainS_values(j)=MainS;                     % Storing main stability values
@@ -111,8 +111,8 @@ Ciw(end) = [];
 
 Systemdiff = [0, diff(sum(C*volprc,1))]; % Difference in system concentration per dt
 
-inflow = Cf*(Jkonv_values)*(dt/dx)*volprc;                 % Input [mol]
-outflow = Ciw.* Jkonv_values*(dt/dx)*volprc*(1-sig_i);     % Output [mol]
+inflow = Cf*(Jtotv_values)*(dt/dx)*volprc;                 % Input [mol]
+outflow = Ciw.* Jtotv_values*(dt/dx)*volprc*(1-sig_i);     % Output [mol]
 infoutdiff = (inflow - outflow);                           % Difference in input and output
 ERROR = ((Systemdiff - infoutdiff).*Systemdiff.^(-1))*100; % Mass conservation error
 
