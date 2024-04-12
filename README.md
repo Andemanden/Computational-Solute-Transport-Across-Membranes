@@ -1,4 +1,4 @@
-# Computational Solute Transport Across Membranes 
+# Solute Transport Computation On Membranes
 ![Matlab Version][matlab-image] ![Topic][topic-image] ![Uni.][AAU-image] ![ECTS.][ECTS-image] ![LIC][LIC-image]
 > A Membrane-based Process Modeling Simulation Using Emperical Numerical Methods
 
