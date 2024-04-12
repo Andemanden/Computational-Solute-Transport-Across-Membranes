@@ -1,5 +1,5 @@
 # Computational Solute Transport Across Membranes 
-![Matlab Version][matlab-image] ![Topic][topic-image] ![Uni.][AAU-image] ![ECTS.][ECTS-image]
+![Matlab Version][matlab-image] ![Topic][topic-image] ![Uni.][AAU-image] ![ECTS.][ECTS-image] ![LIC][LIC-image]
 > A Membrane-based Process Modeling Simulation Using Emperical Numerical Methods
 
 ## Table of contents
@@ -29,8 +29,9 @@ The concept is bades on an emperical numerical method
 
 
 ## Simulation Results
-Pictures to be added
-![Matlab Result](sim_images/General_overview.jpg)
+> Pictures to be added
+
+<img src="sim_images/General_overview.jpg" width="505" height="400">
 
 
 ## Use cases
@@ -44,3 +45,4 @@ This code has already been used in this article: <br />
 [topic-image]: https://img.shields.io/badge/Topic-Integrated_Process_Modeling-green
 [AAU-image]: https://img.shields.io/badge/Uni-AAU-blue
 [ECTS-image]: https://img.shields.io/badge/ECTS-15-red
+[LIC-image]: https://img.shields.io/badge/LIC-CC_BY--NC--SA-brown
