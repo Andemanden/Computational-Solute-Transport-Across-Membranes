@@ -30,6 +30,8 @@ The concept is bades on an emperical numerical method
 
 ## Simulation Results
 Pictures to be added
+![Matlab Result](sim_images/General_overview.jpg)
+
 
 ## Use cases
 This code has already been used in this article: <br />
