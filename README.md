@@ -14,10 +14,10 @@
 A chemistry tool for modeling solute molecules transport through a membrane. It uses data from a Visual MINTEQ simulation of a solution where equilibrium has transpired.
 
  
-## Mathematical methodology
+### Mathematical methodology
 The concept is bades on an emperical numerical method
 
-## Key theoretical aspects
+### Key theoretical aspects
 * Advections
   * Solute addvection
   * Percipitate addvection
@@ -27,16 +27,15 @@ The concept is bades on an emperical numerical method
 * Solute Accumulation
 * Fouling
 
-
 ## Simulation Results
 > Pictures to be added
 
 <img src="sim_images/General_overview.jpg" width="505" height="400">
 
-
 ## Use cases
 This code has already been used in this article: <br />
 [Membrane-based Process Modeling of Phosphorus Recovery from the Danish Sewage Sludge Using Numerical Methods](https://kbdk-aub.primo.exlibrisgroup.com/permalink/45KBDK_AUB/a7me0f/alma9921650701005762)
+
 
 
 
