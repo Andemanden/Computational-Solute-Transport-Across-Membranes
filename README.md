@@ -48,7 +48,7 @@ git clone https://github.com/Andemanden/Computational-Solute-Transport-Across-Me
 ```
 Linux:
 ```
-git clone https://github.com/user/repository --depth 1 --branch=master ~/dir-name
+git clone https://github.com/Andemanden/Computational-Solute-Transport-Across-Membranes.git --depth 1 --branch=master ~/dir-name
 ```
 **Current MATLAB version:** <br />
 **[MathWorks Page](https://se.mathworks.com/help/install/ug/install-products-with-internet-connection.html)**
