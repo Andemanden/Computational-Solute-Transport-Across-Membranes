@@ -2,10 +2,12 @@
 ![Matlab Version][matlab-image] ![Topic][topic-image] ![Uni.][AAU-image] ![ECTS.][ECTS-image] ![LIC][LIC-image]
 > A Membrane-based Process Modeling Simulation Using Emperical Numerical Methods
 
+
 ## Table of contents
 * [General info](#general-info)
 * [Mathematical methodology](#Mathematical-methodology)
-* [Key functionalities](#Key-functionalities)
+* [Key theoretical aspects](#Key-theoretical-aspects)
+* [Installation](#Installation)
 * [Simulation results](#Simulation-results)
 * [Use cases](#Use-cases)
 
@@ -13,7 +15,6 @@
 ## General info
 A chemistry tool for modeling solute molecules transport through a membrane. It uses data from a Visual MINTEQ simulation of a solution where equilibrium has transpired.
 
- 
 ### Mathematical methodology
 The concept is bades on an emperical numerical method
 
@@ -26,6 +27,23 @@ The concept is bades on an emperical numerical method
 * Osmotic pressure
 * Solute Accumulation
 * Fouling
+
+## Installation
+OS X & Windows: 
+```
+git clone https://github.com/Andemanden/Computational-Solute-Transport-Across-Membranes.git
+```
+Linux:
+```
+git clone https://github.com/user/repository --depth 1 --branch=master ~/dir-name
+```
+**Current MATLAB version:** <br />
+**[MathWorks Page](https://se.mathworks.com/help/install/ug/install-products-with-internet-connection.html)**
+
+**Visual MINTEQ:** <br />
+**[The MINTEQ Page](https://vminteq.com/download/)**
+
+
 
 ## Simulation Results
 > Pictures to be added
