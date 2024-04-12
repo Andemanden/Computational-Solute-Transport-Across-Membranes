@@ -1,6 +1,18 @@
 # Solute Transport Computation On Membranes
 ![Matlab Version][matlab-image] ![Topic][topic-image] ![Uni.][AAU-image] ![ECTS.][ECTS-image] ![LIC][LIC-image]
 > A Membrane-based Process Modeling Simulation Using Emperical Numerical Methods
+---
+<details>
+  <summary><strong>Show Creators Of Project:</strong></summary>
+Axelsen, D. A. L., <br />
+Galsøe, P., <br />
+Hansen, J. A., <br />
+Mølgaard, J. S., <br />
+Rehné, A. M., <br />
+Zegarra, L. K., <br />
+
+</details>
+
 
 
 ## Table of contents
@@ -28,6 +40,7 @@ The concept is bades on an emperical numerical method
 * Solute Accumulation
 * Fouling
 
+
 ## Installation
 OS X & Windows: 
 ```
@@ -43,8 +56,6 @@ git clone https://github.com/user/repository --depth 1 --branch=master ~/dir-nam
 **Visual MINTEQ:** <br />
 **[The MINTEQ Page](https://vminteq.com/download/)**
 
-
-
 ## Simulation Results
 > Pictures to be added
 
@@ -54,7 +65,8 @@ git clone https://github.com/user/repository --depth 1 --branch=master ~/dir-nam
 This code has already been used in this article: <br />
 [Membrane-based Process Modeling of Phosphorus Recovery from the Danish Sewage Sludge Using Numerical Methods](https://kbdk-aub.primo.exlibrisgroup.com/permalink/45KBDK_AUB/a7me0f/alma9921650701005762)
 
-
+## Current progress
+Progress: [======================] 100%
 
 
 <!-- Markdown link & img dfn's -->
