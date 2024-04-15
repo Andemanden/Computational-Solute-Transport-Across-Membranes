@@ -44,11 +44,13 @@ A chemistry tool for modeling solute molecules transport through a membrane. It 
 
 
 ### Mathematical methodology
-The concept is based on an emperical numerical method
+The concept is an emperical numerical method based on the generalized advection-diffusion equation.
 <!-- This content will not appear in the rendered Markdown -->
-The main movement of the emperical model is defined by:
+
+The movement equation of the emperical model is solved numerically as a finite difference explicit upwind scheme in accordance to the forward Euler method as:
 
 $$c_{i,j}=c_{i,j-1}+ D \frac{(c_{i+1,j-1}-2c_{i,j-1}+c_{i-1,j-1})}{\Delta x^2}\Delta t - J_{tot,v} \frac{(c_{i,j-1}-c_{i-1,j-1})}{\Delta x} \Delta t$$
+
 
 #### Bountary Conditions
 The boundary conditions is defined as follows:
