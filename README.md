@@ -3,7 +3,11 @@
 > A Membrane-based Process Modeling Simulation Using Emperical Numerical Methods
 ---
 <details>
-  <summary><strong>Show Creators Of Project:</strong></summary>
+  <summary><strong>Show Creators Of Project:</strong></summary
+
+                                                       
+## **Project Creators:** <br />
+
 Axelsen, D. A. L., <br />
 Galsøe, P., <br />
 Hansen, J. A., <br />
