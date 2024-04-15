@@ -40,7 +40,7 @@ A chemistry tool for modeling solute molecules transport through a membrane. It 
 * Osmotic pressure
 * Solute Accumulation
 * Fouling
-* Mass deviation investigation
+* Conservation of mass investigation
 
 
 ### Mathematical methodology
